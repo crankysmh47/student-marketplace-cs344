@@ -4,7 +4,13 @@ CS344 Web Engineering, Assignment 1. Annan Khan, CMS 506644, BESE15-B. Assigned 
 
 A browser-only campus marketplace for goods, service offers and wanted goods. It uses semantic HTML, CSS and vanilla JavaScript, with no framework or backend. The approved newspaper design has white surfaces, compact editorial columns and separate Wanted classifieds.
 
-## Run the application
+## Live application
+
+https://student-marketplace-cs344.vercel.app
+
+This production URL is public and does not require a Vercel account. The deployed app has the same in-memory demo behavior as the local version.
+
+## Run locally
 
 Install Python 3, open a terminal in this repository, then run:
 
@@ -71,4 +77,14 @@ The instructor's permission to use the generated preview was confirmed by the st
 
 ## Assignment continuity
 
-The current stage is preserved in assignment-1 and an assignment-1-v1.2 tag (the original v1.0 checkpoint is retained). Keep future PHP/PDO and MERN stages in separate assignment folders or branches. Consult docs/design-lock.md for shared product rules. The full-project rubric and final due date have not yet been supplied.
+The current stage is preserved in assignment-1 and an assignment-1-v1.3 tag (the original v1.0 checkpoint is retained). Keep future PHP/PDO and MERN stages in separate assignment folders or branches. Consult docs/design-lock.md for shared product rules. The full-project rubric and final due date have not yet been supplied.
+
+
+## Deploy updates
+
+The static Vercel project uses assignment-1 as its deployed directory. No build step is needed. With the Vercel CLI signed into the owning account, run:
+
+    vercel link --yes --project student-marketplace-cs344 --scope crankysmh47s-projects --cwd assignment-1
+    vercel deploy --prod --yes --scope crankysmh47s-projects --cwd assignment-1
+
+Keep .vercel ignored. The GitHub repository remains private; only the app directory is publicly deployed. See docs/deployment.md for verification.

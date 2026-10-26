@@ -1,3 +1,4 @@
+319c3304702d205b9fba52d0f12ce3d388bacdade80ad223c550935fadaa20a6  assignment-1/.gitignore
 876681c531eabcaf5a8a434e8e5b019c385eefb00b72e0948805cfe2f4461451  assignment-1/app.js
 0ab90dd5e897eead5cafefc3ef3d67d7cdd6fad76e89a075d7571b0ec3a7ffe8  assignment-1/assets/backpack.svg
 4238dab19d77549fdecc37ab95f732d4f3fd1a085904c5c84ac01a42a0f10dcc  assignment-1/assets/bike.svg
@@ -27,3 +28,4 @@ e212c616aa63497d32af2d11f31b2356273a0e9da55679ffdb068f969947e5b3  assignment-1/e
 ce742221fd9ab9ba3574bcee0804f32ce89aecdab289ee25f1e971b16ea53cdd  assignment-1/styles.css
 eaa031565f73f6fdaec7f930762be642290d360e1dfec32cd161694bdbf5657a  assignment-1/themes.css
 bf8f183cac5cff229d363adefb0f3daa3496b6a61e79c036f4ad1bbb3ae1a156  assignment-1/themes.js
+20e5b9d9a9e50181e241456635df85828407051a033882e39c9d13e2db1221b4  assignment-1/vercel.json
