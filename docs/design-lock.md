@@ -2,6 +2,10 @@
 
 Approved by Annan Khan on 26 October 2026. The immutable reference is ../approved-design-2026-10-26 outside this repository, with hashes and a ZIP alongside it.
 
+## Navigation refinement
+
+The user approved another refinement on 26 October 2026: desktop navigation moves into a compact left rail, the redundant visible browse heading is removed, and the reset notice moves into the rail. Browse retains an accessible visually hidden h1. At 850px and below navigation is horizontal; the core newspaper listings and Wanted rail keep their existing behavior.
+
 ## Visual contract
 
 Keep the page and card surfaces pure white (#FFFFFF). Use the locally bundled Unifraktur Cook blackletter face for the masthead, Roboto Slab for compact listing titles, and Arial for controls and description copy. The masthead reaches 52px on desktop, listing titles remain 21px, and prices remain 20px. Use the sizes already encoded in newspaper.css as the authority at each breakpoint.

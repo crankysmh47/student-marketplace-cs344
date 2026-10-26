@@ -50,12 +50,12 @@ Actual browser screenshots are included. Desktop (1280x800), tablet (768x1024) a
 
 ![Desktop marketplace preview](docs/screenshots/preview.jpg)
 
-- [Full desktop browse](docs/screenshots/desktop-browse.jpg)
+- [Desktop browse](docs/screenshots/desktop-browse.jpg)
 - [Tablet browse](docs/screenshots/tablet-browse.jpg)
 - [Mobile browse](docs/screenshots/mobile-browse.jpg)
 - [Listing form](docs/screenshots/listing-form.jpg)
 - [Native validation](docs/screenshots/form-validation.jpg)
-- [My listings after submission](docs/screenshots/my-listings.jpg)
+- [My listings and review states](docs/screenshots/my-listings.jpg)
 - [Saved listings](docs/screenshots/saved-listings.jpg)
 
 Browser automation stalled at a JavaScript Delete confirmation. The in-memory delete and cancel paths pass automated DOM tests; complete this one browser check during the live walkthrough.
@@ -68,4 +68,4 @@ The instructor's permission to use the generated preview was confirmed by the st
 
 ## Assignment continuity
 
-The current stage is preserved in assignment-1 and an assignment-1-v1.0 tag. Keep future PHP/PDO and MERN stages in separate assignment folders or branches. Consult docs/design-lock.md for shared product rules. The full-project rubric and final due date have not yet been supplied.
+The current stage is preserved in assignment-1 and an assignment-1-v1.1 tag (the original v1.0 checkpoint is retained). Keep future PHP/PDO and MERN stages in separate assignment folders or branches. Consult docs/design-lock.md for shared product rules. The full-project rubric and final due date have not yet been supplied.

@@ -31,3 +31,8 @@ Marks are rubric weights, not predicted scores.
 3. Open the app locally; confirm Delete and cancel in the browser, then refresh to restore demo records.
 4. Practise explaining filtering, rendering, validation and pending-state behavior, and changing one field rule or CSS value live.
 5. Upload the report in the format accepted by LMS; the source ZIP is also supplied as a backup. The brief still requires GitHub source or a permitted demonstration, so the report alone is not the whole assignment.
+
+
+## Navigation refinement
+
+The left desktop rail and hidden browse h1 reduce the top stack. At 1280x800 the search begins at y=140 and results at y=400, versus y=579 in the earlier capture. CSS retains pure-white surfaces. Eight DOM tests still pass after the structure change. Screenshots and wireframes are refreshed for this revision.

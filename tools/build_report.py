@@ -36,24 +36,27 @@ def wire_card(draw, x, y, w, h, title, image=True, ink='#215441'):
     draw.line((x,y+h,x+w,y+h),fill='#bdc7be',width=2)
 
 def make_wires():
-    img=Image.new('RGB',(1600,830),'white'); d=ImageDraw.Draw(img)
+    img=Image.new('RGB',(1600,760),'white'); d=ImageDraw.Draw(img)
     text(d,(38,20),'Desktop browse wireframe',30,True)
-    text(d,(490,76),'Student Marketplace',42,True)
-    text(d,(44,145),'Marketplace          Saved finds          My listings',23)
-    box(d,(1330,132,1548,177),'Post listing',22)
-    d.line((38,191,1555,191),fill='#222722',width=4)
-    box(d,(42,220,1550,277),'Search listings                                                    Search',24)
-    text(d,(44,298),'All listings    Goods    Services    Wanted                  Refine     Sort     Grid / List',22)
-    d.line((42,342,1550,342),fill='#bdc7be',width=2)
-    # Wide feature and the shorter entries beneath it share the main tracks.
-    wire_card(d,42,370,710,210,'Goods - two-column feature',False)
-    wire_card(d,778,370,345,395,'Goods - narrow listing')
-    wire_card(d,42,608,345,190,'Goods',False)
-    wire_card(d,410,608,342,190,'Services',False,'#305c86')
-    d.line((1150,365,1150,800),fill='#bdc7be',width=2)
-    text(d,(1200,372),'WANTED CLASSIFIEDS',21,True,'#86532f')
-    wire_card(d,1180,421,365,220,'Wanted - student request',False,'#86532f')
-    box(d,(1180,670,1545,728),'Place a wanted listing',20,'#86532f')
+    text(d,(520,74),'Student Marketplace',42,True)
+    d.line((38,145,1555,145),fill='#222722',width=4)
+    # Compact left navigation, with search and listings immediately alongside.
+    d.line((230,178,230,712),fill='#bdc7be',width=2)
+    for y,label in [(190,'Marketplace'),(246,'Saved finds'),(302,'My listings')]:text(d,(42,y),label,20,True)
+    box(d,(42,374,208,432),'Post listing',20)
+    text(d,(42,467),'Demo records',17)
+    text(d,(42,494),'Reset on refresh',17)
+    box(d,(268,178,1550,233),'Search listings                                                     Search',22)
+    text(d,(270,257),'All listings    Goods    Services    Wanted                         Refine     Sort',21)
+    d.line((268,299,1550,299),fill='#bdc7be',width=2)
+    wire_card(d,268,324,620,190,'Goods - two-column feature',False)
+    wire_card(d,914,324,298,375,'Goods - narrow listing')
+    wire_card(d,268,548,298,174,'Goods',False)
+    wire_card(d,590,548,298,174,'Services',False,'#305c86')
+    d.line((1230,320,1230,720),fill='#bdc7be',width=2)
+    text(d,(1260,330),'WANTED CLASSIFIEDS',19,True,'#86532f')
+    wire_card(d,1250,382,300,205,'Wanted request',False,'#86532f')
+    box(d,(1250,617,1550,675),'Place a wanted listing',18,'#86532f')
     img.save(WIRES/'browse-desktop.png')
 
     img=Image.new('RGB',(1600,920),'white'); d=ImageDraw.Draw(img)
@@ -127,83 +130,33 @@ def build():
         doc.add_picture(str(WIRES/name),width=Inches(width))
         doc.paragraphs[-1].paragraph_format.space_after=Pt(0)
     def caption(t):doc.add_paragraph(t,'Caption')
-    def table(headers,rows,widths):
-        tab=doc.add_table(rows=1,cols=len(headers));tab.autofit=False
-        for i,label in enumerate(headers):
-            tab.columns[i].width=Inches(widths[i]);cell=tab.rows[0].cells[i];cell.text=label
-            shade=OxmlElement('w:shd');shade.set(qn('w:fill'),'E9EDE9');cell._tc.get_or_add_tcPr().append(shade)
-            for r in cell.paragraphs[0].runs:r.bold=True
-        repeat=OxmlElement('w:tblHeader');tab.rows[0]._tr.get_or_add_trPr().append(repeat)
-        for row in rows:
-            cells=tab.add_row().cells
-            for i,value in enumerate(row):cells[i].text=value
-        tblw=tab._tbl.tblPr.find(qn('w:tblW'));tblw.set(qn('w:type'),'dxa');tblw.set(qn('w:w'),str(int(sum(widths)*1440)))
-        for row in tab.rows:
-            for i,cell in enumerate(row.cells):
-                cell.width=Inches(widths[i])
-                for par in cell.paragraphs:
-                    par.paragraph_format.space_after=Pt(5)
-                    for r in par.runs:r.font.size=Pt(10)
-        return tab
-
     doc.add_paragraph('Student Marketplace', 'Title')
-    doc.add_paragraph('Assignment 1 Design and WDLC Note','Subtitle')
+    doc.add_paragraph('Assignment 1 Design Note','Subtitle')
     p('Annan Khan  |  CMS 506644  |  BESE15-B')
-    p('Assigned idea 16  |  Client-side web application  |  Due 30 October 2026')
-    h('User and problem')
-    p('Students need a single place to find goods, offer small services and request items from other students. Student Marketplace groups these activities into Goods, Services and Wanted, with category and price controls that reduce the effort of finding a relevant listing. All records are fictional and no payments are processed.')
-    h('Core workflow')
-    p('Browse or search listings, refine the results, open a listing and save it for later. A demo student can create a listing, review its live preview and submit it. New and edited posts enter Pending review in My listings. The demo owner can edit or delete those records; public browse shows active records only. A page refresh restores the supplied fixtures.')
-    h('Assignment 1 scope')
-    p('The application runs in the browser using semantic HTML, CSS and vanilla JavaScript. Meaningful interactions include combined search and filtering, in-memory listing CRUD, saved items and type-specific forms. Nine fixture records include six active listings and three owner records illustrating pending, rejected and expired states. Those states are demonstrations, not a working moderator service.')
-    h('Approved visual design')
-    p('The design uses a stark white page and card background, a blackletter masthead, compact slab-serif headlines and plain interface text. Narrow editorial columns contain occasional two-column features. Content-height packing allows subsequent listings to occupy space below a shorter feature. Wanted requests use a separate classifieds rail. On smaller screens the rail moves below the main listings and the layout reduces to a single column.')
-    p('Goods use green solid rules and a filled text label. Services use blue double rules and an outlined label. Wanted uses rust dashed notices. Text and border patterns communicate type without relying on color alone. The form and other views use the same typography and spacing.')
-
-    page('Wireframes and responsive structure')
-    p('These schematics describe the approved layout and content hierarchy. They are wireframes, not browser screenshots. The running application remains the source for exact typography and spacing.')
-    picture('browse-desktop.png',6.65)
-    caption('Figure 1  Desktop browse with occasional wider entries and a separate Wanted classifieds column')
-    picture('mobile-and-form.png',6.65)
-    caption('Figure 2  Mobile browse stacks vertically and the posting form provides labels, validation and a live preview')
-    p('The CSS contains breakpoints for desktop, tablet and mobile layouts. Native headings, a skip link, input labels, fieldsets, visible focus states and ordinary links/buttons provide the intended keyboard and screen-reader structure. Desktop, tablet and mobile browser checks found no horizontal overflow. Heading-to-search keyboard focus was also verified.')
-
-    page('Client design and validation')
-    picture('client-data-flow.png')
-    caption('Figure 3  Assignment 1 data flow is local to the browser after static files load')
-    h('Browser and server responsibilities')
-    p('The static HTTP server returns HTML, CSS, JavaScript, images and fonts. The browser holds the listing array, filter state, saved-item set and recently viewed identifiers in memory. Event handlers validate inputs and update the DOM. No API call stores a record, and browser storage is not used for personal data. Later stages add server validation, persistence, authenticated ownership and moderation; the current client checks are not security controls.')
-    h('Core sample records')
-    table(['Listing','Type','Amount'],[
-        ['14-inch laptop','Goods','PKR 62,000'],['Engineering textbooks','Goods','PKR 2,800'],
-        ['Adjustable desk lamp','Goods','PKR 1,800'],['Calculus tutoring','Services','PKR 750 per hour'],
-        ['Unopened headphones','Goods','PKR 4,500'],['Study chair request','Wanted','Flexible budget'],
-    ],[3.7,1.2,2.1])
-    h('Validation and output safety')
-    p('Browser constraints require a title of 5 to 80 characters, a description of 20 to 1500 characters, a valid category and an amount between 0 and 1,000,000 PKR in steps of 0.01. JavaScript repeats the checks for the application flow. Goods select a condition, services select a rate unit, and a flexible wanted budget disables the amount field. A minimum filter amount above the maximum produces an error. Empty results offer a clear reset action.')
-    p('User-controlled text is escaped before template rendering or assigned through textContent. New and edited listings remain pending. Edit and delete actions check the fictional owner flag; a delete confirmation allows cancellation. Real privacy and access enforcement require the later server-backed implementation.')
-
-    page('WDLC and verification')
-    h('Web development lifecycle')
-    p('Requirements: use idea 16, a browser-only application, responsive CSS, semantic forms, six or more records and meaningful interactions. Design: define the three listing types, core journey, wireframes, white newspaper layout and responsive behavior. Implementation: build the HTML shell, CSS layers, fixture data and event-driven JavaScript. Testing: exercise DOM workflows and edge cases, then inspect real viewports and keyboard use. Deployment and maintenance: publish versioned source, retain exact local run instructions and carry the same user problem into the PHP/PDO and MERN stages.')
-    h('Automated verification')
-    table(['Check group','Result'],[
-        ['Native constraints and amount limits','Passed'],['Search, empty results and invalid ranges','Passed'],
-        ['Create, edit, delete and pending visibility','Passed'],['Invalid submission and safe literal text','Passed'],
-        ['Save and unsave without persistent storage','Passed'],['Layout spacing calculation','Passed'],
-        ['Delete cancellation and non-owned target','Passed'],['Service units and flexible wanted budget','Passed'],
-    ],[5.7,1.3])
-    p('Eight Node and jsdom tests pass. Browser checks confirm native validation, create and edit, saved items, empty search, heading-to-search focus and three responsive sizes without horizontal overflow. Screenshots are in docs/screenshots. The Delete confirmation stalled in browser automation; deletion passes the DOM tests. A student live walkthrough is still required. The new fixes began with failing tests; the original prototype was not developed test first.')
-    h('Repository and local demonstration')
-    p('Repository: https://github.com/crankysmh47/student-marketplace-cs344')
-    p('From the repository root, run the command below with Python 3 installed. Open http://127.0.0.1:5519/?theme=forest#browse and keep the terminal open. No backend or database setup is required.')
+    p('CS344 Web Engineering  |  Idea 16  |  30 October 2026')
+    h('User and workflow')
+    p('Student Marketplace helps students find goods, offer services and request items on campus. Users browse or search, filter by type, category and price, then open or save a listing. The demo owner can create, edit and delete posts. New and edited posts stay pending. The app contains nine fictional records, including six active listings, and resets on refresh.')
+    h('Design choices')
+    p('The layout follows a newspaper: a blackletter masthead, compact headlines, white backgrounds and occasional wider listings. Wanted posts have a separate classifieds column. Green solid rules identify goods, blue double rules identify services, and rust dashed borders identify wanted posts. Each type also has a text label.')
+    p('Desktop navigation sits on the left so search and listings appear higher on the page. Tablet and mobile use a compact horizontal menu; small screens stack the listings. Labeled fields, semantic headings, a skip link and visible keyboard focus support accessibility.')
+    h('WDLC stages')
+    p('Requirements: identify the student workflow and the constraints of idea 16. Design: sketch the browse and posting screens and choose responsive layouts. Implementation: build the HTML structure, CSS and JavaScript interactions. Testing: check valid, invalid and empty cases, then inspect desktop, tablet and mobile views. Maintenance: preserve this version in Git and extend the same records in later assignments.')
+    h('What runs in the browser')
+    p('JavaScript filters the listing array, handles forms and updates the DOM. Records, saved items and recent views stay in memory. Forms use native browser constraints and JavaScript checks; user text is escaped before display. The HTTP server only serves static files. There is no database, real login or payment service in Assignment 1.')
+    h('Run and source')
+    p('From the repository root, run the command below with Python 3, then open http://127.0.0.1:5519/?theme=forest#browse. Setup steps, screenshots and the eight automated tests are documented in the README.')
     par=doc.add_paragraph('py -m http.server 5519 --bind 127.0.0.1 --directory assignment-1')
     for r in par.runs:r.font.name='Consolas';r.font.size=Pt(9)
-    h('Continuity and attribution')
-    p('Assignment 2 introduces PHP 8.5, PDO, persistence, Fetch, server validation and session/CSRF protection. Assignment 3 introduces React, Express, MongoDB and authenticated roles. University-email sign-in awaits the supplied template. Contact requests, real moderation, expiry processing and abuse reports are later-stage work.')
-    p('The brief is CS344 Web Engineering Assignments 1 to 3 2026, supplied in the project folder. Original fictional SVG illustrations are bundled locally. Unifraktur Cook and Roboto Slab come from the official google/fonts repository with their SIL and Apache licenses. Earlier font variants retain their own notices in assets/fonts. The repository is private; the assessor must have access before review.')
+    p('https://github.com/crankysmh47/student-marketplace-cs344')
+    p('Fonts: Unifraktur Cook and Roboto Slab from google/fonts. Licenses and asset attribution are included in the repository.')
+    page('Wireframes')
+    p('These wireframes show the main layout. Actual application screenshots are included in the repository README.')
+    picture('browse-desktop.png',6.65)
+    caption('Figure 1  Desktop browse with left navigation and a separate Wanted column')
+    picture('mobile-and-form.png',6.65)
+    caption('Figure 2  Mobile browse and the listing form with a live preview')
     doc.core_properties.author='Annan Khan'
-    doc.core_properties.title='Student Marketplace Assignment 1 Design and WDLC Note'
+    doc.core_properties.title='Student Marketplace Assignment 1 Design Note'
     doc.core_properties.subject='CS344 Web Engineering Idea 16'
     target=OUT/'Annan_Khan_506644_Assignment_1.docx'
     for element in [doc._element,doc.styles.element]:
