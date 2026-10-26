@@ -2,57 +2,63 @@ TAP version 13
 # Subtest: browser validation remains enabled with bounded text and amount fields
 ok 1 - browser validation remains enabled with bounded text and amount fields
   ---
-  duration_ms: 56.7019
+  duration_ms: 75.1654
   type: 'test'
   ...
 # Subtest: search, type and amount filtering handle no matches and invalid ranges
 ok 2 - search, type and amount filtering handle no matches and invalid ranges
   ---
-  duration_ms: 47.9948
+  duration_ms: 48.8984
   type: 'test'
   ...
 # Subtest: create, edit and delete affect only the demo owner and retain pending visibility
 ok 3 - create, edit and delete affect only the demo owner and retain pending visibility
   ---
-  duration_ms: 125.0678
+  duration_ms: 112.055
   type: 'test'
   ...
 # Subtest: invalid custom submission creates no record and safe text stays literal
 ok 4 - invalid custom submission creates no record and safe text stays literal
   ---
-  duration_ms: 61.1249
+  duration_ms: 52.2349
   type: 'test'
   ...
 # Subtest: save and unsave update the saved view without persistent browser storage
 ok 5 - save and unsave update the saved view without persistent browser storage
   ---
-  duration_ms: 33.2218
+  duration_ms: 34.1863
   type: 'test'
   ...
 # Subtest: packing math reserves spacing without inheriting a taller neighboring card
 ok 6 - packing math reserves spacing without inheriting a taller neighboring card
   ---
-  duration_ms: 11.8173
+  duration_ms: 13.0311
   type: 'test'
   ...
 # Subtest: delete cancellation and a non-owned target leave records intact
 ok 7 - delete cancellation and a non-owned target leave records intact
   ---
-  duration_ms: 11.9196
+  duration_ms: 9.0161
   type: 'test'
   ...
 # Subtest: service units and flexible wanted budgets use distinct validated fields
 ok 8 - service units and flexible wanted budgets use distinct validated fields
   ---
-  duration_ms: 59.9092
+  duration_ms: 53.2661
   type: 'test'
   ...
-1..8
-# tests 8
+# Subtest: sidebar collapses without losing form data and stays available on mobile
+ok 9 - sidebar collapses without losing form data and stays available on mobile
+  ---
+  duration_ms: 11.9448
+  type: 'test'
+  ...
+1..9
+# tests 9
 # suites 0
-# pass 8
+# pass 9
 # fail 0
 # cancelled 0
 # skipped 0
 # todo 0
-# duration_ms 681.2187
+# duration_ms 709.6745

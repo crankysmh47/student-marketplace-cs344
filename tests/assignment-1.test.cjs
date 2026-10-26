@@ -10,7 +10,7 @@ function boot(t, route='#browse') {
   const w = dom.window; w.scrollTo=()=>{}; w.confirm=()=>true;
   w.HTMLElement.prototype.scrollIntoView=()=>{};
   const ctx=dom.getInternalVMContext();
-  for(const file of ['app.js','edition.js','themes.js']) vm.runInContext(fs.readFileSync(path.join(site,file),'utf8'),ctx,{filename:file});
+  for(const file of ['app.js','edition.js','themes.js','navigation.js']) vm.runInContext(fs.readFileSync(path.join(site,file),'utf8'),ctx,{filename:file});
   t.after(()=>w.close());
   return {w,d:w.document,run:code=>vm.runInContext(code,ctx),go:async hash=>{w.location.hash=hash;await new Promise(resolve=>w.setTimeout(resolve,15));}};
 }
@@ -75,4 +75,19 @@ test('service units and flexible wanted budgets use distinct validated fields',a
   assert(d.querySelector('#amount').disabled);assert.equal(d.querySelector('#amount').required,false);
   fill(d,{title:'Wanted study chair',description:'Looking for a stable chair suitable for a small hostel desk.',category:'Room essentials'});
   submit(w,d.querySelector('#listing-form'));await new Promise(r=>w.setTimeout(r,15));assert.equal(run('listings.at(-1).kind'),'wanted');assert.equal(run('listings.at(-1).amount'),null);
+});
+
+test('sidebar collapses without losing form data and stays available on mobile',t=>{
+  const {w,d}=boot(t,'#post');
+  const button=d.querySelector('#sidebar-toggle');assert(button,'sidebar toggle exists');
+  const content=d.querySelector('#sidebar-content'),shell=d.querySelector('.app-shell');
+  const title=d.querySelector('#title');title.value='Keep this unsent listing';
+  assert.equal(button.getAttribute('aria-expanded'),'true');
+  button.click();assert.equal(content.hidden,true);assert(shell.classList.contains('sidebar-collapsed'));
+  assert.equal(button.getAttribute('aria-expanded'),'false');assert.equal(title.value,'Keep this unsent listing');
+  button.click();assert.equal(content.hidden,false);assert.equal(title.value,'Keep this unsent listing');
+  button.click();w.innerWidth=390;w.dispatchEvent(new w.Event('resize'));
+  assert.equal(content.hidden,false);assert.equal(button.hidden,true);assert(!shell.classList.contains('sidebar-collapsed'));
+  w.innerWidth=1280;w.dispatchEvent(new w.Event('resize'));
+  assert.equal(button.hidden,false);assert.equal(content.hidden,true);
 });

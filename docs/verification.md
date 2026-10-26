@@ -36,3 +36,8 @@ Marks are rubric weights, not predicted scores.
 ## Navigation refinement
 
 The left desktop rail and hidden browse h1 reduce the top stack. At 1280x800 the search begins at y=140 and results at y=400, versus y=579 in the earlier capture. CSS retains pure-white surfaces. Eight DOM tests still pass after the structure change. Screenshots and wireframes are refreshed for this revision.
+
+
+## Collapsible sidebar
+
+Nine tests pass after a new failing regression test was added for the sidebar. It covers collapse/expand, preserved unsent form data, mobile visibility and restoring the desktop state. In-browser clicking Hide menu hid its content and widened main from 1029px to 1137px at a 1280px viewport, without overflow. Enter reopened the Menu button. At 390px the toggle is hidden and navigation remains available. Screenshot: screenshots/sidebar-collapsed.jpg.

@@ -407,3 +407,13 @@ body[data-view=post] .app-shell .post-nav,body[data-view=edit] .app-shell .post-
   body[data-theme=forest] .app-shell .navigation-inner nav>a { font-size: 9px; letter-spacing: .4px; }
   body[data-theme=forest] .app-shell .post-nav { position: fixed; bottom: 17px; right: 16px; min-height: 44px; padding: 11px 15px; margin: 0; font-size: 12px; }
 }
+
+/* Collapsible desktop rail. Small-screen navigation always stays available. */
+.sidebar-toggle { width: 100%; min-height: 40px; padding: 8px 5px; margin-bottom: 12px; border: 1px solid #99aa9b; border-radius: 0; background: #fff; color: #183f30; font: 600 11px/1.4 var(--sans); cursor: pointer; }
+.sidebar-toggle:hover { background: #f3f5f2; }
+.sidebar-toggle[hidden],.app-shell .navigation-inner[hidden] { display: none!important; }
+@media(min-width:851px) {
+  .app-shell.sidebar-collapsed { grid-template-columns: 56px minmax(0,1fr); }
+  body[data-theme=forest] .app-shell.sidebar-collapsed>.navigation-wrap { padding-right: 0; border-right: 0; }
+  .sidebar-collapsed .sidebar-toggle { margin-bottom: 0; }
+}

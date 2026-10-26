@@ -18,6 +18,8 @@ All listings and saves live in memory and reset on refresh. Alex is a fictional 
 
 The supplied project variant adds moderation, categories, saved items, contact requests, expiry and report-abuse flows using demo data and no payments. Assignment 1 implements listing discovery, categories, price/type filtering, in-memory listing CRUD and saved items. Pending/rejected/expired fixtures demonstrate lifecycle states. These states do not implement a moderator service, automatic expiry, contact requests or report resolution. Those are planned for the later assignments. No separate additional instructor rule was supplied beyond this description.
 
+The desktop menu can be collapsed with Hide menu and reopened with Menu. It supports keyboard activation and preserves form values. Small-screen navigation stays visible.
+
 ## Demonstrate the workflow
 
 1. Browse Goods, Services and Wanted. Open Refine, select a category or price range, and apply it. Search for a title and try a query with no matches.
@@ -51,6 +53,7 @@ Actual browser screenshots are included. Desktop (1280x800), tablet (768x1024) a
 ![Desktop marketplace preview](docs/screenshots/preview.jpg)
 
 - [Desktop browse](docs/screenshots/desktop-browse.jpg)
+- [Collapsed desktop sidebar](docs/screenshots/sidebar-collapsed.jpg)
 - [Tablet browse](docs/screenshots/tablet-browse.jpg)
 - [Mobile browse](docs/screenshots/mobile-browse.jpg)
 - [Listing form](docs/screenshots/listing-form.jpg)
@@ -68,4 +71,4 @@ The instructor's permission to use the generated preview was confirmed by the st
 
 ## Assignment continuity
 
-The current stage is preserved in assignment-1 and an assignment-1-v1.1 tag (the original v1.0 checkpoint is retained). Keep future PHP/PDO and MERN stages in separate assignment folders or branches. Consult docs/design-lock.md for shared product rules. The full-project rubric and final due date have not yet been supplied.
+The current stage is preserved in assignment-1 and an assignment-1-v1.2 tag (the original v1.0 checkpoint is retained). Keep future PHP/PDO and MERN stages in separate assignment folders or branches. Consult docs/design-lock.md for shared product rules. The full-project rubric and final due date have not yet been supplied.

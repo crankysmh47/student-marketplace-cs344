@@ -19,3 +19,8 @@ Use the same visual language for details, saved listings, My listings and the li
 ## Future continuity
 
 Assignment 2 requires PHP/PDO persistence, Fetch, server validation and session/CSRF protections. Assignment 3 requires React, Express and MongoDB. Preserve fields, rules, fixtures, CSS classes and tests where useful; framework and server transitions require some replacement code. Real university-email restrictions await the supplied address template. Real moderation, contact requests, expiry and report resolution belong to later server-backed stages.
+
+
+## Sidebar collapse
+
+The desktop rail has a text toggle with aria-expanded and aria-controls. Collapse reduces its width from 164px to 56px and hides the links without rerendering the view. Menu remains reachable to reopen it. The choice lasts for the current page session; mobile always shows navigation and hides the toggle.
