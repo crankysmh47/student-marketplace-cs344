@@ -1,0 +1,374 @@
+@font-face {
+  font-family: 'Roboto Slab';
+  src: url('assets/fonts/roboto-slab.ttf') format('truetype');
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+}
+
+/* The newspaper is the primary identity; listing types use distinct ink colors. */
+body[data-theme=forest] {
+  --serif: 'Roboto Slab', Georgia, 'Times New Roman', serif;
+  --sans: Arial, 'Helvetica Neue', sans-serif;
+  --ink: #222722;
+  --muted: #5b655e;
+  --pine: #183f30;
+  --teal: #305c86;
+  --olive: #86532f;
+  --sage-ink: #536d55;
+  --accent: var(--pine);
+  --line: #c4ccc4;
+  color: var(--ink);
+}
+body[data-theme=forest] .header-inner {
+  grid-template-columns: minmax(100px,1fr) auto minmax(100px,1fr);
+  min-height: 112px;
+  padding: 24px 82px 24px 36px;
+}
+body[data-theme=forest] .brand {
+  font-family: var(--serif);
+  font-size: clamp(27px,2.8vw,36px);
+  font-weight: 700;
+  letter-spacing: -1.2px;
+  color: #202a23;
+}
+body[data-theme=forest] .masthead-side .small-caps {
+  color: var(--sage-ink);
+  letter-spacing: 1.4px;
+  line-height: 1.7;
+  max-width: 100px;
+}
+body[data-theme=forest] .forest-corner {
+  width: 53px;
+  height: 57px;
+  right: 12px;
+  top: 12px;
+}
+body[data-theme=forest] .forest-corner img { filter: saturate(.65); }
+body[data-theme=forest] .navigation-wrap { border-top: 5px double var(--ink); border-bottom-color: var(--ink); }
+body[data-theme=forest] .navigation-inner nav>a { letter-spacing: 1px; font-weight: 600; }
+body[data-theme=forest] .demo-bar { color: #626c64; border-bottom-color: #dce1dc; }
+body[data-theme=forest] .market-intro { margin-bottom: 25px; padding-bottom: 18px; border-bottom: 1px solid var(--line); }
+body[data-theme=forest] .market-intro h1 { font-size: clamp(25px,2.4vw,30px); letter-spacing: -1.3px; line-height: 1.2; }
+body[data-theme=forest] :is(.collection-heading h1,.detail-header h1,main>h1,.mine-heading h1) {
+  font-family: var(--serif);
+  font-size: clamp(26px,2.8vw,34px);
+  line-height: 1.2;
+  letter-spacing: -1.4px;
+}
+body[data-theme=forest] .listing-card { --section-ink: var(--pine); border-top: 1px solid var(--section-ink); }
+body[data-theme=forest] .kind-service { --section-ink: var(--teal); border-top: 3px double var(--section-ink); }
+body[data-theme=forest] .kind-wanted { --section-ink: var(--olive); border-top: 3px double var(--section-ink); }
+body[data-theme=forest] .listing-card h3 { font-family: var(--serif); font-size: 25px; font-weight: 700; line-height: 1.2; letter-spacing: -.65px; }
+body[data-theme=forest] .edition-grid>.listing-card:first-child h3 { font-size: 31px; }
+body[data-theme=forest] :is(.kind-service,.kind-wanted) h3 { font-size: 27px; }
+body[data-theme=forest] .card-rubric { border-bottom: 1px solid #e0e4df; margin-bottom: 12px; }
+body[data-theme=forest] .card-rubric>span,
+body[data-theme=forest] :is(.kind-service,.kind-wanted) .card-rubric>span,
+body[data-theme=forest] .listing-card .card-price,
+body[data-theme=forest] .listing-card .read-listing { color: var(--section-ink); }
+body[data-theme=forest] .card-meta { font-size: 10px; line-height: 1.6; color: #606a62; letter-spacing: .5px; }
+body[data-theme=forest] .card-excerpt { font-family: Georgia,serif; font-size: 15px; line-height: 1.65; color: #404840; }
+body[data-theme=forest] .card-price { font-family: var(--serif); font-size: 24px; line-height: 1.4; }
+body[data-theme=forest] .card-price small { font-family: var(--sans); letter-spacing: 0; }
+body[data-theme=forest] .card-bottom { border-top-color: #d4dbd3; }
+body[data-theme=forest] .listing-card h3 a:hover { text-decoration: underline; text-decoration-color: var(--section-ink); text-decoration-thickness: 1px; text-underline-offset: 4px; }
+body[data-theme=forest] .search-form { border-color: #768b7b; min-height: 58px; }
+body[data-theme=forest] .search-form:focus-within { outline: 2px solid var(--teal); outline-offset: 3px; }
+body[data-theme=forest] .button.primary { background: var(--pine); border-color: var(--pine); }
+body[data-theme=forest] .button.primary:hover { background: #285c46; border-color: #285c46; transform: none; }
+body[data-theme=forest] .button:not(.primary):hover { background: #f3f5f2; border-color: var(--sage-ink); }
+body[data-theme=forest] .quick-picks { gap: 3px 20px; margin: 10px 0 24px; }
+body[data-theme=forest] .quick-picks button { color: var(--sage-ink); min-height: 38px; border-bottom: 1px solid transparent; }
+body[data-theme=forest] .quick-picks button[aria-pressed=true] { color: var(--pine); border-bottom-color: var(--pine); font-weight: 700; }
+body[data-theme=forest] .type-tab { font-family: var(--serif); font-size: 16px; font-weight: 700; }
+body[data-theme=forest] .type-tab[data-kind=service] { color: var(--teal); }
+body[data-theme=forest] .type-tab[data-kind=wanted] { color: var(--olive); }
+body[data-theme=forest] .type-count { font-family: var(--sans); font-size: 10px; }
+body[data-theme=forest] .view-toggle button { min-height: 36px; }
+body[data-theme=forest] .view-toggle button[aria-pressed=true] { background: var(--pine); color: white; }
+body[data-theme=forest] :is(.filter-panel,.listing-form,.detail-facts) { border-radius: 0; box-shadow: none; background: white; }
+body[data-theme=forest] .page-description { font: 16px/1.6 Georgia,serif; color: var(--muted); max-width: 650px; margin-top: 12px; }
+body[data-theme=forest] .form-layout { grid-template-columns: minmax(0,1.6fr) minmax(260px,1fr); gap: 40px; margin-top: 30px; align-items: start; }
+body[data-theme=forest] .listing-form { padding: 26px 0 0; border: 0; border-top: 4px double var(--ink); }
+body[data-theme=forest] .form-section-label { font: 700 22px/1.4 var(--serif); color: var(--ink); letter-spacing: -.4px; text-transform: none; margin-bottom: 22px; }
+body[data-theme=forest] :is(.field label,.type-choice legend) { font-size: 13px; font-weight: 600; color: var(--ink); }
+body[data-theme=forest] .field { margin-bottom: 22px; }
+body[data-theme=forest] :is(.field input,.field select,.field textarea) { border-radius: 0; border: 1px solid #99aa9b; padding: 12px; min-height: 46px; color: var(--ink); background: white; }
+body[data-theme=forest] :is(.field input,.field textarea)::placeholder { color: #68726b; }
+body[data-theme=forest] :is(input,textarea,select)[aria-invalid=true] { border: 2px solid #a02d32; }
+body[data-theme=forest] .radio-type span { border-radius: 0; min-height: 46px; padding: 12px 16px; border-color: #99aa9b; font-size: 13px; }
+body[data-theme=forest] .radio-type input:checked+span { background: var(--pine); border-color: var(--pine); color: white; }
+body[data-theme=forest] .radio-type input[value=service]:checked+span { background: var(--teal); border-color: var(--teal); }
+body[data-theme=forest] .radio-type input[value=wanted]:checked+span { background: var(--olive); border-color: var(--olive); }
+body[data-theme=forest] .form-aside { border-left: 1px solid var(--line); padding-left: 28px; }
+body[data-theme=forest] .preview-caption { color: var(--sage-ink); letter-spacing: 1.8px; font-size: 10px; border-bottom: 1px solid var(--line); padding-bottom: 12px; }
+body[data-theme=forest] .preview-caption>span { display: none; }
+body[data-theme=forest] .form-aside .listing-card { border: 0; border-top: 3px double var(--section-ink); padding: 0 0 20px; }
+body[data-theme=forest] .form-aside .listing-card h3 { font-size: 26px; }
+body[data-theme=forest] .preview-private { line-height: 1.7; font-size: 12px!important; }
+body[data-theme=forest] .submit-notice { border: 0; border-left: 3px solid var(--teal); padding: 8px 16px; line-height: 1.7; color: #46584b; }
+body[data-theme=forest] .form-actions { border-top: 1px solid var(--line); padding-top: 22px; margin-top: 24px; gap: 12px; }
+body[data-theme=forest] .form-actions .button { min-height: 46px; }
+body[data-theme=forest] .detail-facts { border-top: 4px double var(--pine); }
+body[data-theme=forest] .section-label h2 { font-family: var(--serif); font-size: 26px; }
+body[data-theme=forest] .site-footer { border-top-color: var(--ink); }
+body[data-theme=forest] :is(a,button,input,select,textarea,summary):focus-visible { outline: 2px solid var(--teal); outline-offset: 4px; }
+body[data-theme=forest][data-layout=list] .edition-grid h3 { font-size: 25px; }
+@media(max-width:1100px) {
+  body[data-theme=forest] .header-inner { grid-template-columns: 1fr auto; min-height: 115px; }
+  body[data-theme=forest] .masthead-side:first-child { display: none; }
+}
+@media(max-width:800px) {
+  body[data-theme=forest] .form-layout { grid-template-columns: 1fr; gap: 30px; }
+  body[data-theme=forest] .form-aside { position: static; border-left: 0; padding-left: 0; max-width: 500px; width: 100%; }
+  body[data-theme=forest] .brand { font-size: 33px; letter-spacing: -1.3px; }
+  body[data-theme=forest] .masthead-right { display: none; }
+}
+@media(max-width:639px) {
+  body[data-theme=forest] .header-inner { min-height: 105px; padding: 25px 54px 25px 18px; }
+  body[data-theme=forest] .brand { display: block; font-size: clamp(22px,6vw,36px); letter-spacing: -1.1px; line-height: 1.15; }
+  body[data-theme=forest] .forest-corner { width: 40px; height: 43px; right: 7px; top: 12px; }
+  body[data-theme=forest] .market-intro { padding-bottom: 16px; margin-bottom: 20px; }
+  body[data-theme=forest] .type-tabs { gap: 15px; }
+  body[data-theme=forest] .type-tab { font-size: 13px; }
+  body[data-theme=forest] .type-count { font-size: 9px; }
+  body[data-theme=forest] .listing-card h3,body[data-theme=forest] .edition-grid>.listing-card:first-child h3 { font-size: 26px; }
+  body[data-theme=forest] .quick-picks { gap: 0 15px; }
+  body[data-theme=forest] .quick-picks button { font-size: 11px; }
+  body[data-theme=forest] .radio-types { flex-wrap: wrap; }
+  body[data-theme=forest] .radio-type span { padding: 10px 12px; }
+  body[data-theme=forest] :is(.field input,.field select,.field textarea) { font-size: 16px; }
+  body[data-theme=forest][data-layout=list] .edition-grid h3 { font-size: 20px; }
+}
+
+/* Compact classified columns. DOM and keyboard order run down each column. */
+body[data-theme=forest] { background: #fff; --paper: #fff; --surface: #fff; }
+body[data-theme=forest] .listing-card { --section-ink: #215441; background: #fff; }
+body[data-theme=forest] .kind-service { --section-ink: #305c86; }
+body[data-theme=forest] .kind-wanted { --section-ink: #86532f; }
+body[data-theme=forest][data-layout=board] .edition-grid {
+  display: block;
+  columns: 3;
+  column-gap: 34px;
+  column-rule: 1px solid #c7cec8;
+}
+body[data-theme=forest][data-layout=board] .edition-grid>.listing-card,
+body[data-theme=forest][data-layout=board] .edition-grid>.listing-card:first-child.kind-goods {
+  display: inline-flex;
+  flex-direction: column;
+  vertical-align: top;
+  break-inside: avoid;
+  width: 100%;
+  margin: 0 0 28px;
+  padding: 0 0 17px;
+  border-top: 3px solid var(--section-ink);
+  border-bottom: 1px solid #dce0dc;
+  gap: 0;
+}
+body[data-theme=forest][data-layout=board] .edition-grid>.listing-card>.card-content {
+  height: auto;
+  padding: 12px 0 0;
+}
+body[data-theme=forest][data-layout=board] .edition-grid>.listing-card>.card-image {
+  width: 100%; height: auto; aspect-ratio: 1.85; max-height: none; border-radius: 0;
+}
+body[data-theme=forest] .card-rubric { min-height: 38px; margin-bottom: 10px; }
+body[data-theme=forest] .card-rubric>span,
+body[data-theme=forest] :is(.kind-service,.kind-wanted) .card-rubric>span {
+  padding: 3px 7px;
+  border: 1px solid var(--section-ink);
+  color: var(--section-ink);
+  font: 700 10px/1.4 'Courier New',monospace;
+  letter-spacing: .5px;
+  background: white;
+}
+body[data-theme=forest] .listing-card h3,
+body[data-theme=forest] .edition-grid>.listing-card:first-child h3,
+body[data-theme=forest] .form-aside .listing-card h3 {
+  font-family: var(--serif);
+  font-size: 21px;
+  font-weight: 600;
+  line-height: 1.25;
+  letter-spacing: -.5px;
+}
+body[data-theme=forest] .card-meta { font: 10px/1.6 'Courier New',monospace; letter-spacing: 0; }
+body[data-theme=forest] .card-excerpt,
+body[data-theme=forest] .edition-grid>.listing-card:first-child .card-excerpt {
+  font: 14px/1.6 Arial,sans-serif;
+  margin-top: 9px;
+  margin-bottom: 12px;
+}
+body[data-theme=forest] .card-price,
+body[data-theme=forest] .edition-grid>.listing-card:first-child .card-price { font-size: 20px; margin-top: 4px; }
+body[data-theme=forest] .card-bottom { margin-top: 12px; padding-top: 9px; }
+body[data-theme=forest] .read-listing { font: 600 11px/1.5 Arial,sans-serif; }
+body[data-theme=forest] .type-tab { font: 600 13px/1.5 var(--serif); }
+body[data-theme=forest] .type-tab[data-kind=goods] { color: #215441; }
+body[data-theme=forest] .type-tab[data-kind=service] { color: #305c86; }
+body[data-theme=forest] .type-tab[data-kind=wanted] { color: #86532f; }
+body[data-theme=forest] .section-label h2 { font-size: 23px; }
+body[data-theme=forest] .form-section-label { font-size: 20px; }
+body[data-theme=forest] .description p { font: 15px/1.7 Arial,sans-serif; }
+body[data-theme=forest] .page-description { font: 14px/1.6 Arial,sans-serif; }
+body[data-theme=forest] .brand { font-weight: 600; }
+body[data-theme=forest][data-layout=list] .edition-grid h3 { font-size: 21px; }
+@media(max-width:1050px) {
+  body[data-theme=forest][data-layout=board] .edition-grid { columns: 2; column-gap: 28px; }
+}
+@media(max-width:639px) {
+  body[data-theme=forest][data-layout=board] .edition-grid { columns: 1; }
+  body[data-theme=forest] .brand { font-size: clamp(21px,5.4vw,30px); letter-spacing: -.8px; }
+  body[data-theme=forest] .header-inner { min-height: 90px; }
+  body[data-theme=forest] .market-intro h1 { font-size: 25px; }
+  body[data-theme=forest] .type-tabs { gap: 13px; }
+  body[data-theme=forest] .type-tab { font-size: 12px; }
+  body[data-theme=forest][data-layout=list] .edition-grid h3 { font-size: 19px; }
+}
+
+/* Small, consistent classification stamps; the paper and card remain white. */
+body[data-theme=forest] .listing-card .card-rubric>.listing-type-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 7px;
+  background: var(--section-ink);
+  color: #fff;
+  border: 1px solid var(--section-ink);
+  border-radius: 0;
+  font: 700 10px/1.4 'Courier New',monospace;
+  letter-spacing: .5px;
+  text-transform: uppercase;
+}
+/* Three editorial treatments, readable without icons or color alone. */
+body[data-theme=forest] .listing-card.kind-service .card-rubric>.listing-type-label {
+  background: #fff;
+  color: var(--section-ink);
+  border: 1px solid var(--section-ink);
+}
+body[data-theme=forest] .listing-card.kind-wanted .card-rubric>.listing-type-label {
+  background: #fff;
+  color: var(--section-ink);
+  border: 0;
+  border-bottom: 1px dashed var(--section-ink);
+  padding-left: 0;
+  padding-right: 0;
+  letter-spacing: 1.6px;
+}
+body[data-theme=forest] .listing-card.kind-service,
+body[data-theme=forest][data-layout=board] .edition-grid>.listing-card.kind-service {
+  border-top: 5px double var(--section-ink);
+  border-bottom: 1px solid var(--section-ink);
+}
+body[data-theme=forest] .listing-card.kind-wanted,
+body[data-theme=forest][data-layout=board] .edition-grid>.listing-card.kind-wanted {
+  border: 1px dashed var(--section-ink);
+  padding: 0 13px 17px;
+  background: #fff;
+}
+
+/* Newspaper grid: narrow stories, occasional two-column features, separate classifieds. */
+body[data-theme=forest][data-layout=board] .edition-grid.newspaper-results {
+  display: block;
+  columns: auto;
+  column-rule: none;
+}
+.editorial-spread { display: grid; grid-template-columns: minmax(0,1fr); gap: 24px; align-items: start; }
+.editorial-spread.has-classifieds { grid-template-columns: minmax(0,3fr) minmax(0,1fr); }
+.editorial-spread.has-classifieds .editorial-mosaic { grid-template-columns: repeat(3,minmax(0,1fr)); }
+.editorial-spread>.classifieds-block { border-left: 1px solid #bdc7be; padding-left: 20px; }
+.editorial-mosaic {
+  display: grid;
+  grid-template-columns: repeat(4,minmax(0,1fr));
+  gap: 30px 24px;
+  align-items: stretch;
+}
+.editorial-slot,.classifieds-block { min-width: 0; }
+.editorial-slot.story-featured { grid-column: span 2; grid-row: auto; }
+body[data-theme=forest] .editorial-mosaic .listing-card {
+  margin: 0;
+  min-width: 0;
+  border-top: 3px solid var(--section-ink);
+  border-bottom: 1px solid #dce0dc;
+  padding-bottom: 16px;
+}
+body[data-theme=forest] .editorial-mosaic .listing-card.kind-service { border-top: 5px double var(--section-ink); }
+body[data-theme=forest] .editorial-mosaic .listing-card.kind-wanted { border: 1px dashed var(--section-ink); padding: 0 13px 17px; margin-bottom: 16px; }
+body[data-theme=forest] .editorial-mosaic .card-content { padding: 12px 0 0; height: auto; }
+body[data-theme=forest] .editorial-mosaic .card-image { aspect-ratio: 1.6; width: 100%; height: auto; max-height: none; border-radius: 0; }
+body[data-theme=forest] .editorial-mosaic .editorial-slot>.listing-card { height: auto; }
+body[data-theme=forest] .editorial-mosaic .story-featured>.listing-card { display: grid; grid-template-columns: minmax(0,1fr) minmax(0,1fr); gap: 0 20px; align-content: start; align-items: start; }
+body[data-theme=forest] .editorial-mosaic .story-featured .card-rubric { grid-column: 1/-1; width: 100%; }
+body[data-theme=forest] .editorial-mosaic .story-featured .card-image { min-height: 0; aspect-ratio: 1.4; }
+body[data-theme=forest] .editorial-mosaic .story-featured .card-content { padding-top: 0; }
+.classifieds-masthead { text-align: center; border-top: 5px double #86532f; border-bottom: 1px solid #86532f; padding: 12px 0 13px; margin-bottom: 17px; }
+.classifieds-masthead>span { font: 700 10px/1.4 'Courier New',monospace; letter-spacing: 2.3px; color: #86532f; }
+.classifieds-masthead h2 { font: 600 21px/1.4 var(--serif); letter-spacing: -.5px; margin: 4px 0; }
+.classifieds-masthead p { font: 11px/1.5 var(--sans); color: var(--muted); }
+body[data-theme=forest] .classifieds-block .listing-card h3 { font-size: 19px; }
+body[data-theme=forest] .classifieds-block .listing-card { margin-bottom: 16px; }
+body[data-theme=forest] .classifieds-block .card-excerpt { font-size: 13px; }
+body[data-theme=forest] .classifieds-block .card-bottom { flex-wrap: wrap; gap: 6px; }
+.classifieds-place { display: block; border-top: 3px double #86532f; border-bottom: 1px solid #86532f; padding: 14px 5px; text-align: center; font: 600 12px/1.5 var(--serif); color: #86532f; }
+.classifieds-place:hover { text-decoration: underline; text-underline-offset: 4px; }
+.edition-section-heading { min-height: 55px; padding: 10px 0 12px; border-top: 4px double #283c2d; display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+.edition-section-heading h2 { font: 600 16px/1.4 var(--serif); letter-spacing: -.2px; }
+.edition-section-heading>a { font-size: 11px; color: var(--pine); }
+.classifieds-grid { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 24px; margin-top: 16px; }
+body[data-theme=forest] .header-inner { padding-right: 36px; }
+@media(max-width:1050px) {
+  .editorial-mosaic { grid-template-columns: repeat(3,minmax(0,1fr)); }
+  .editorial-spread.has-classifieds { grid-template-columns: minmax(0,2fr) minmax(0,1fr); }
+  .editorial-spread.has-classifieds .editorial-mosaic { grid-template-columns: repeat(2,minmax(0,1fr)); }
+  .classifieds-grid { grid-template-columns: repeat(2,minmax(0,1fr)); }
+  body[data-theme=forest] .header-inner { padding-right: 24px; }
+}
+@media(max-width:850px) {
+  .editorial-spread.has-classifieds { grid-template-columns: minmax(0,1fr); }
+  .editorial-spread>.classifieds-block { border-left: 0; padding-left: 0; border-top: 1px solid #bdc7be; padding-top: 20px; }
+}
+@media(min-width:640px) and (max-width:800px) {
+  .editorial-mosaic { grid-template-columns: repeat(2,minmax(0,1fr)); }
+}
+@media(max-width:639px) {
+  .editorial-mosaic,.classifieds-grid,.editorial-spread.has-classifieds .editorial-mosaic { grid-template-columns: minmax(0,1fr); }
+  .editorial-slot.story-featured { grid-column: auto; grid-row: auto; }
+  body[data-theme=forest] .editorial-mosaic .story-featured>.listing-card { display: flex; flex-direction: column; align-items: stretch; gap: 0; }
+  body[data-theme=forest] .editorial-mosaic .story-featured .card-image { aspect-ratio: 1.6; }
+  body[data-theme=forest] .editorial-mosaic .story-featured .card-content { padding-top: 12px; }
+  body[data-theme=forest] .header-inner { padding-right: 18px; }
+}
+
+/* Content-height tracks let smaller stories start directly below a feature. */
+.editorial-mosaic.masonry-ready {
+  --edition-spacing: 30px;
+  grid-auto-rows: 4px;
+  row-gap: 2px;
+  align-items: start;
+}
+@media(max-width:639px) {
+  .editorial-mosaic.masonry-ready { grid-auto-rows: auto; row-gap: 30px; }
+}
+
+/* Traditional blackletter for the marketplace's own newspaper masthead. */
+@font-face {
+  font-family: 'Unifraktur Cook';
+  src: url('assets/fonts/unifraktur-cook.ttf') format('truetype');
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+}
+body[data-theme=forest] .brand {
+  font-family: 'Unifraktur Cook',Georgia,serif;
+  font-weight: 700;
+  font-size: clamp(38px,4.1vw,52px);
+  line-height: 1.08;
+  letter-spacing: -.5px;
+  gap: 10px;
+}
+@media(max-width:800px) {
+  body[data-theme=forest] .brand { font-size: 42px; }
+}
+@media(max-width:639px) {
+  body[data-theme=forest] .brand { font-size: clamp(30px,8.1vw,43px); letter-spacing: -.3px; }
+}
