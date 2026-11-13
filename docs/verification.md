@@ -24,5 +24,5 @@ Student: **Annan Khan** (`CMS 506644`, `BESE15-B`) · Assigned Idea #16: *Studen
 ## Public Deployment Check
 - Verified live Vercel production deployment [https://student-marketplace-cs344.vercel.app](https://student-marketplace-cs344.vercel.app) serves the latest static assets with HTTP `200`, matching layout behavior, and zero console errors. See [deployment.md](deployment.md).
 
-## Next Before Submission Doc
-- Rebuild [submission/Annan_Khan_506644_Assignment_1.docx](../submission/Annan_Khan_506644_Assignment_1.docx) & `.pdf` so the submitted report matches this finalized monochrome editorial build, refined tests, wireframes, and verification scope.
+## Submission Status
+- Local formatted Assignment 1 submission package (`.docx`, excluded from version control via `.gitignore`) matches this finalized monochrome editorial build, automated DOM tests, wireframes, and live deployment URL.

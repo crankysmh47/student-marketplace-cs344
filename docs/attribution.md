@@ -10,5 +10,5 @@ The application runs standalone with locally bundled fonts and SVG artwork; it d
 - Custom campus skyline backdrop and listing category illustrations (`skyline.svg`, `laptop.svg`, `books.svg`, `lamp.svg`, `tutoring.svg`, `headphones.svg`, `wanted.svg`, `desk.svg`, `bike.svg`, `backpack.svg`) authored as lightweight local inline-free SVGs for the demo catalog.
 
 ## Verification & AI Disclosure
-- Screenshots in `docs/screenshots/` are direct Chromium captures of the running static client served from `assignment-1/`; wireframes in `docs/wireframes/` were generated from `tools/build_report.py`.
+- Screenshots in `docs/screenshots/` are direct Chromium captures of the running static client served from `assignment-1/`; low-fidelity schematic wireframes reside in `docs/wireframes/`.
 - AI coding assistance was used in designing, refining, auditing, and testing the HTML/CSS/JavaScript implementation, accessibility behaviors, documentation, and test suite under instructor guidelines for CS344 Assignment 1.

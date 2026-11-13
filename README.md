@@ -122,8 +122,7 @@ Captured from the running static client in Chromium across desktop (`1440x900`, 
 - `assignment-1/`: Runnable static frontend (`index.html`, `app.js`, `edition.js`, `navigation.js`, `premium.css`, local SVG artwork & bundled `assets/fonts/`).
 - `tests/`: Automated DOM and workflow test suite (`tests/assignment-1.test.cjs` — 15 tests).
 - `docs/`: Verification notes (`verification.md`), deployment notes (`deployment.md`), design lock (`design-lock.md`), asset attribution (`attribution.md`), wireframes (`docs/wireframes/`), and browser screenshots (`docs/screenshots/`).
-- `tools/`: Python helper (`build_report.py`) for regenerating documentation wireframes and reports.
-- `submission/`: Formatted assignment design note document (`.docx` / `.pdf`).
+(Local report scripts and formatted `.docx` submission packages are kept outside version control via `.gitignore`.)
 
 ---
 

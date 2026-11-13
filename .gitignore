@@ -6,3 +6,11 @@ __pycache__/
 .tmp/
 
 .vercel/
+
+# Local build scripts and assignment submission files
+tools/
+submission/
+*.docx
+*.pdf
+*.zip
+~$*
