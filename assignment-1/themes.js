@@ -9,7 +9,7 @@
     document.body.dataset.theme = theme;
     document.documentElement.dataset.theme = theme;
     buttons.forEach(button => button.setAttribute('aria-pressed', String(button.dataset.themeChoice === theme)));
-    document.querySelector('meta[name="theme-color"]').content = theme === 'forest' ? '#ffffff' : '#e9f0ed';
+    document.querySelector('meta[name="theme-color"]').content = '#0b0b0c';
     if (updateUrl) {
       const url = new URL(location.href);
       url.searchParams.set('theme', theme);

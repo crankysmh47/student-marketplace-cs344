@@ -77,17 +77,128 @@ test('service units and flexible wanted budgets use distinct validated fields',a
   submit(w,d.querySelector('#listing-form'));await new Promise(r=>w.setTimeout(r,15));assert.equal(run('listings.at(-1).kind'),'wanted');assert.equal(run('listings.at(-1).amount'),null);
 });
 
-test('sidebar collapses without losing form data and stays available on mobile',t=>{
+test('slide-over menu opens and closes without rerendering or losing form data',t=>{
   const {w,d}=boot(t,'#post');
-  const button=d.querySelector('#sidebar-toggle');assert(button,'sidebar toggle exists');
-  const content=d.querySelector('#sidebar-content'),shell=d.querySelector('.app-shell');
+  const button=d.querySelector('#menu-toggle');assert(button,'menu toggle exists');
+  const drawer=d.querySelector('#site-menu'),backdrop=d.querySelector('.menu-backdrop');
   const title=d.querySelector('#title');title.value='Keep this unsent listing';
-  assert.equal(button.getAttribute('aria-expanded'),'true');
-  button.click();assert.equal(content.hidden,true);assert(shell.classList.contains('sidebar-collapsed'));
-  assert.equal(button.getAttribute('aria-expanded'),'false');assert.equal(title.value,'Keep this unsent listing');
-  button.click();assert.equal(content.hidden,false);assert.equal(title.value,'Keep this unsent listing');
-  button.click();w.innerWidth=390;w.dispatchEvent(new w.Event('resize'));
-  assert.equal(content.hidden,false);assert.equal(button.hidden,true);assert(!shell.classList.contains('sidebar-collapsed'));
-  w.innerWidth=1280;w.dispatchEvent(new w.Event('resize'));
-  assert.equal(button.hidden,false);assert.equal(content.hidden,true);
+  assert.equal(button.getAttribute('aria-expanded'),'false');assert(drawer.hasAttribute('inert'));
+  button.click();
+  assert.equal(button.getAttribute('aria-expanded'),'true');assert(drawer.classList.contains('is-open'));
+  assert(!drawer.hasAttribute('inert'));assert.equal(backdrop.hidden,false);
+  assert.equal(d.querySelector('#title'),title);assert.equal(title.value,'Keep this unsent listing');
+  d.dispatchEvent(new w.KeyboardEvent('keydown',{key:'Escape'}));
+  assert.equal(button.getAttribute('aria-expanded'),'false');assert(!drawer.classList.contains('is-open'));
+  assert(drawer.hasAttribute('inert'));assert.equal(title.value,'Keep this unsent listing');
+  button.click();backdrop.click();assert.equal(button.getAttribute('aria-expanded'),'false');
+});
+test('filters drawer consolidates type tabs, sort and layout controls and omits goods badge',t=>{
+  const {d}=boot(t);
+  assert.equal(d.querySelector('[data-spotlight]'),null,'spotlight button removed');
+  assert.equal(d.querySelector('.kind-goods .listing-type-label'),null,'goods badge removed');
+  assert(d.querySelector('.kind-service .listing-type-label'),'services badge kept');
+  const panel=d.querySelector('#filter-panel');
+  assert(panel.querySelector('[data-kind="service"]'),'type tabs inside filters drawer');
+  assert(panel.querySelector('#sort'),'sort control inside filters drawer');
+  assert(panel.querySelector('[data-layout="list"]'),'view toggle inside filters drawer');
+});
+
+test('removes demo and placeholder disclaimers across routes and upgrades status badges',t=>{
+  const {d}=boot(t);
+  const w=d.defaultView;
+  for(const route of ['#browse','#mine','#saved','#post','#listing/laptop']){
+    w.location.hash=route;
+    w.dispatchEvent(new w.Event('hashchange'));
+    assert.doesNotMatch(
+      d.body.textContent,
+      /\b(demo|fictional|dummy|prototype|illustrative)\b|resets on refresh/i,
+      `unexpected placeholder copy on ${route}`
+    );
+  }
+  w.location.hash='#mine';
+  w.dispatchEvent(new w.Event('hashchange'));
+  const badges=[...d.querySelectorAll('.status-badge')];
+  assert(badges.length>=1,'expected status badges on #mine');
+  assert.equal(d.querySelector('.status-dot'),null,'legacy status dot removed');
+  for(const b of badges)assert(b.querySelector('svg.icon'),'status badge renders icon');
+});
+
+test('custom select menus sync bidirectionally with underlying select elements',async t=>{
+  const {d}=boot(t);
+  const w=d.defaultView;
+  const sortSel=d.querySelector('#sort');
+  const sortWrap=sortSel.closest('.custom-select');
+  assert(sortWrap,'#sort enhanced with .custom-select');
+  sortWrap.querySelector('.select-trigger').click();
+  assert(sortWrap.classList.contains('is-open'),'clicking trigger opens dropdown menu');
+  sortWrap.querySelector('.select-option[data-value="amount_asc"]').click();
+  assert.equal(sortSel.value,'amount_asc','option click updates select value');
+  assert(!sortWrap.classList.contains('is-open'),'selecting option closes dropdown menu');
+
+  const catSel=d.querySelector('#category');
+  const catWrap=catSel.closest('.custom-select');
+  assert(catWrap,'#category enhanced with .custom-select');
+  catSel.value='Books & stationery';
+  catSel.dispatchEvent(new w.Event('change',{bubbles:true}));
+  assert.match(catWrap.querySelector('.select-label').textContent,/Books & stationery/);
+
+  w.location.hash='#post';
+  w.dispatchEvent(new w.Event('hashchange'));
+  const kindRadio=d.querySelector('input[name="kind"][value="service"]');
+  kindRadio.checked=true;
+  kindRadio.dispatchEvent(new w.Event('change',{bubbles:true}));
+  await new Promise(r=>setTimeout(r,30));
+  const formCatSel=d.querySelector('#form-category');
+  const formCatWrap=formCatSel.closest('.custom-select');
+  assert(formCatWrap,'#form-category enhanced after switching kind');
+  const firstVal=[...formCatSel.options].find(o=>o.value)?.value;
+  assert(firstVal&&formCatWrap.querySelector(`.select-option[data-value="${firstVal}"]`),'service category options synced');
+});
+
+test('photo upload supports any listing kind, updates live preview, and renders on submitted card',async t=>{
+  const {d}=boot(t);
+  const w=d.defaultView;
+  w.location.hash='#post';
+  w.dispatchEvent(new w.Event('hashchange'));
+
+  const wantedRadio=d.querySelector('input[name="kind"][value="wanted"]');
+  wantedRadio.checked=true;
+  wantedRadio.dispatchEvent(new w.Event('change',{bubbles:true}));
+  await new Promise(r=>setTimeout(r,30));
+
+  const uploadInput=d.querySelector('#photo-upload');
+  const dropzone=d.querySelector('.upload-dropzone');
+  assert(uploadInput&&dropzone,'photo upload input and dropzone rendered for wanted listing');
+
+  const sampleFile=new w.File([new Uint8Array([137,80,78,71,13,10,26,10])],'stand-photo.png',{type:'image/png'});
+  Object.defineProperty(uploadInput,'files',{configurable:true,value:[sampleFile]});
+  uploadInput.dispatchEvent(new w.Event('change',{bubbles:true}));
+  await new Promise(r=>setTimeout(r,80));
+
+  assert(d.querySelector('#photo-url').value.startsWith('data:image/png'),'uploaded file encoded to data URL');
+  assert(dropzone.classList.contains('has-photo'),'dropzone enters has-photo state');
+  assert(d.querySelector('#photo-preview-img').src.startsWith('data:image/png'),'dropzone thumbnail populated');
+  assert(d.querySelector('#live-listing .card-media.has-photo img'),'live preview card renders uploaded photo');
+
+  d.querySelector('#title').value='Need Adjustable Desk Lamp for Studio';
+  d.querySelector('#amount').value='4500';
+  const cat=d.querySelector('#form-category');
+  const wantedCat=[...cat.options].find(o=>o.value)?.value;
+  cat.value=wantedCat;
+  cat.dispatchEvent(new w.Event('change',{bubbles:true}));
+  d.querySelector('#description').value='Looking for a warm LED desk lamp near hostels.';
+  d.querySelector('#listing-form').dispatchEvent(new w.Event('submit',{bubbles:true,cancelable:true}));
+  await new Promise(r=>setTimeout(r,30));
+  if(!d.querySelector('.mine-grid'))w.dispatchEvent(new w.Event('hashchange'));
+
+  assert.equal(w.location.hash,'#mine','submitted listing redirects to My listings');
+  const cards=[...d.querySelectorAll('.mine-grid .listing-card')];
+  const created=cards.find(c=>/Need Adjustable Desk Lamp/.test(c.textContent));
+  assert(created&&created.querySelector('.card-media.has-photo img[src^="data:image/png"]'),'my listings renders uploaded photo on pending wanted card');
+
+  const link=created.querySelector('h3 a');
+  assert(link&&/^#listing\//.test(link.getAttribute('href')),'card heading links to listing detail');
+  w.location.hash=link.getAttribute('href');
+  w.dispatchEvent(new w.Event('hashchange'));
+  assert(d.querySelector('img.detail-image[src^="data:image/png"]'),'detail view displays uploaded photo');
 });
