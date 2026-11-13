@@ -1,13 +1,14 @@
-# Asset attribution
+# Asset Attribution & AI Assistance
 
-The application bundles fonts locally; it does not depend on a remote font service.
+The application runs standalone with locally bundled fonts and SVG artwork; it does not depend on external CDNs, frameworks, or remote font services.
 
-- Unifraktur Cook: https://github.com/google/fonts/tree/main/ofl/unifrakturcook - SIL Open Font License, included as Unifraktur-Cook-OFL.txt.
-- Roboto Slab: https://github.com/google/fonts/tree/main/apache/robotoslab - Apache License, included as Roboto-Slab-LICENSE.txt.
-- Libre Caslon Text: https://github.com/google/fonts/tree/main/ofl/librecaslontext - SIL Open Font License, included as Libre-Caslon-OFL.txt.
-- Fraunces: https://github.com/google/fonts/tree/main/ofl/fraunces - SIL Open Font License, included as Fraunces-OFL.txt.
-- DM Sans: https://github.com/google/fonts/tree/main/ofl/dmsans - SIL Open Font License, included as DM-Sans-OFL.txt.
+## Fonts (`assignment-1/assets/fonts/`)
+- **Fraunces** (`fraunces.ttf`): Undercase Type / Google Fonts (`OFL-1.1`), license included at `assignment-1/assets/fonts/Fraunces-OFL.txt`.
+- **DM Sans** (`dm-sans.ttf`): Colophon Foundry / Google Fonts (`OFL-1.1`), license included at `assignment-1/assets/fonts/DM-Sans-OFL.txt`.
 
-The selected newspaper view uses Unifraktur Cook and Roboto Slab. Earlier font files remain for the retained reference styling. Fictional listing illustrations and wireframes are original generated assets. Screenshots in docs/screenshots were captured from the running local app and are not mockups.
+## Vector Artwork (`assignment-1/assets/`)
+- Custom campus skyline backdrop and listing category illustrations (`skyline.svg`, `laptop.svg`, `books.svg`, `lamp.svg`, `tutoring.svg`, `headphones.svg`, `wanted.svg`, `desk.svg`, `bike.svg`, `backpack.svg`) authored as lightweight local inline-free SVGs for the demo catalog.
 
-The student confirmed instructor permission for the AI-assisted source and will add the final assistance statement before LMS submission.
+## Verification & AI Disclosure
+- Screenshots in `docs/screenshots/` are direct Chromium captures of the running static client served from `assignment-1/`; wireframes in `docs/wireframes/` were generated from `tools/build_report.py`.
+- AI coding assistance was used in designing, refining, auditing, and testing the HTML/CSS/JavaScript implementation, accessibility behaviors, documentation, and test suite under instructor guidelines for CS344 Assignment 1.

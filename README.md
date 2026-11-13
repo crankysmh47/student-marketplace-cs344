@@ -119,8 +119,8 @@ Captured from the running static client in Chromium across desktop (`1440x900`, 
 
 ## Repository Layout
 
-- `assignment-1/`: Runnable static frontend (`index.html`, `app.js`, `edition.js`, `navigation.js`, `themes.js`, `premium.css`, local SVG artwork & bundled `assets/fonts/`).
-- `tests/`: Automated DOM and workflow test suite (`tests/assignment-1.test.cjs` — 14 tests).
+- `assignment-1/`: Runnable static frontend (`index.html`, `app.js`, `edition.js`, `navigation.js`, `premium.css`, local SVG artwork & bundled `assets/fonts/`).
+- `tests/`: Automated DOM and workflow test suite (`tests/assignment-1.test.cjs` — 15 tests).
 - `docs/`: Verification notes (`verification.md`), deployment notes (`deployment.md`), design lock (`design-lock.md`), asset attribution (`attribution.md`), wireframes (`docs/wireframes/`), and browser screenshots (`docs/screenshots/`).
 - `tools/`: Python helper (`build_report.py`) for regenerating documentation wireframes and reports.
 - `submission/`: Formatted assignment design note document (`.docx` / `.pdf`).
@@ -129,9 +129,9 @@ Captured from the running static client in Chromium across desktop (`1440x900`, 
 
 ## Assets & Attribution
 
-- Fonts are bundled locally under `assignment-1/assets/fonts/` (no external font CDN dependency): **Fraunces**, **DM Sans**, **Unifraktur Cook**, **Roboto Slab**, and **Libre Caslon Text** with open-source licenses in `assignment-1/assets/fonts/` and details in [docs/attribution.md](docs/attribution.md).
-- Custom SVG campus skyline (`assignment-1/assets/skyline.svg`) and listing illustrations reside under `assignment-1/assets/`.
-- AI coding assistance was used to structure and refine the interface, responsive CSS, documentation wireframes, and test suite under instructor guidelines for CS344 Assignment 1.
+- Fonts are bundled locally under `assignment-1/assets/fonts/` (no external font CDN dependency): **Fraunces** and **DM Sans**, with SIL Open Font License notices included in `assignment-1/assets/fonts/` and details in [docs/attribution.md](docs/attribution.md).
+- Custom SVG campus skyline (`assignment-1/assets/skyline.svg`) and 9 listing illustrations reside under `assignment-1/assets/`.
+- AI coding assistance was used to structure, refine, audit, and test the interface, responsive CSS, documentation wireframes, and test suite under instructor guidelines for CS344 Assignment 1.
 
 ---
 

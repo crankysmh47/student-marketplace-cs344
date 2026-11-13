@@ -8,7 +8,7 @@ Author: Annan Khan | CMS 506644 | BESE15-B
 4. Complete native browser form constraints, retained custom validation and basic listing lifecycle controls without changing the approved layout.
 5. Verify filtering, safe rendering, create/edit/delete ownership simulation, saving and layout calculations with automated tests.
 6. Add exact local run instructions, asset/font attribution, wireframes, test evidence and a concise design/WDLC report.
-7. Create a private GitHub repository and push a tagged Assignment 1 checkpoint. Provide local demonstration instructions; screenshots remain a human task while browser control is disabled.
-8. Render and inspect final report pages, create the submission archive, and list the remaining student-owned AI statement and live walkthrough actions.
+7. Push the repository to GitHub (`origin/main`), deploy the static bundle to Vercel, and capture viewport verification screenshots (`docs/screenshots/`) using headless Chrome. Provide local and hosted run instructions.
+8. Inspect the aligned codebase and documentation, regenerate verification evidence, and prepare the Assignment 1 submission package with AI disclosure, attribution, and walkthrough notes.
 
-The user confirmed instructor approval for reuse of the AI-generated preview and will add the final AI assistance statement before submission. No claim is made that this pre-existing prototype was developed test first; tests precede the new fixes only.
+All prototype iterations, the monochrome editorial redesign, and subsequent accessibility/documentation updates have been reviewed by the author (`Annan Khan`, CMS `506644`). The final submission document discloses AI assistance and asset attribution.

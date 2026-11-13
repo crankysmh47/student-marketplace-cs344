@@ -73,10 +73,27 @@ function enhanceSelects(root = main) {
     trigger.innerHTML = `${select.id === 'sort' ? '<span class="select-prefix">Sort</span>' : ''}<span class="select-label"></span>${selectChev}`;
     const menu = document.createElement('div');
     menu.className = 'select-menu';
+    menu.id = select.id ? `${select.id}-menu` : `select-menu-${Math.random().toString(36).slice(2, 7)}`;
     menu.setAttribute('role', 'listbox');
+    trigger.setAttribute('aria-controls', menu.id);
+    if (lbl && !lbl.id) lbl.id = `${select.id || 'select'}-label`;
+    if (lbl && !trigger.getAttribute('aria-labelledby')) trigger.setAttribute('aria-labelledby', lbl.id);
     wrap.appendChild(trigger);
     wrap.appendChild(menu);
     syncCustomSelect(select);
+
+    const setSelectInvalid = (invalid, message = '') => {
+      wrap.classList.toggle('is-invalid', invalid);
+      if (invalid) trigger.setAttribute('aria-invalid', 'true');
+      else trigger.removeAttribute('aria-invalid');
+      const err = select.id === 'form-category' ? $('#category-error') : null;
+      if (err && (message || !invalid)) err.textContent = invalid ? message : '';
+    };
+
+    select.addEventListener('invalid', () => {
+      setSelectInvalid(true, select.id === 'form-category' ? 'Choose a category for this listing type.' : '');
+      requestAnimationFrame(() => trigger.focus({preventScroll: true}));
+    });
 
     trigger.addEventListener('click', e => {
       e.stopPropagation();
@@ -132,7 +149,10 @@ function enhanceSelects(root = main) {
       else if (e.key === 'Escape') { e.preventDefault(); closeAllSelects(true); }
     });
 
-    select.addEventListener('change', () => syncCustomSelect(select));
+    select.addEventListener('change', () => {
+      syncCustomSelect(select);
+      if (select.validity?.valid) setSelectInvalid(false);
+    });
     if (typeof MutationObserver !== 'undefined') {
       new MutationObserver(() => syncCustomSelect(select)).observe(select, {childList: true, subtree: true});
     }
@@ -211,7 +231,7 @@ browse=function(){
     `<div class="filter-head">`+
     `<div class="type-tabs" aria-label="Listing type">${tabs}</div>`+
     `<div class="result-controls"><p id="result-count" role="status"></p>`+
-    `<label for="sort" class="sort-control"><span class="sr-only">Sort</span><select id="sort">${option('newest','Newest first',query.sort)}${option('amount_asc','Price: low to high',query.sort)}${option('amount_desc','Price: high to low',query.sort)}</select></label>`+
+    `<div class="sort-control"><label for="sort" id="sort-label" class="sr-only">Sort listings</label><select id="sort">${option('newest','Newest first',query.sort)}${option('amount_asc','Price: low to high',query.sort)}${option('amount_desc','Price: high to low',query.sort)}</select></div>`+
     `<div class="view-toggle" role="group" aria-label="Listing layout"><button type="button" data-layout="board" aria-pressed="${resultLayout==='board'}" aria-label="Grid view" title="Grid view">${icon('grid')}</button><button type="button" data-layout="list" aria-pressed="${resultLayout==='list'}" aria-label="List view" title="List view"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/></svg></button></div>`+
     `</div></div>`+
     `<div class="filter-group filter-collections"><span class="filter-label">Collections</span><div class="chip-row" aria-label="Browse collections">${picks}</div></div>`+
@@ -388,7 +408,7 @@ addEventListener('resize', () => { closeAllSelects(false); newspaperLayout(); sc
 
 // Composition is presentation only: filters and pagination own the rows.
 function newspaperRows(rows, layout, sort) {
-  if (layout === 'list' || sort !== 'newest') return rows.map(l => card(l)).join('');
+  if (layout === 'list' || sort !== 'newest') return `<h2 class="sr-only">Browse listings</h2>${rows.map(l => card(l)).join('')}`;
   const wanted = rows.filter(l => l.kind === 'wanted');
   const offers = rows.filter(l => l.kind !== 'wanted');
   if (!offers.length) return `<section class="classifieds-only"><div class="edition-section-heading"><h2>Wanted</h2><a href="#post/wanted">Place a request ${viewArrow}</a></div><div class="classifieds-grid">${wanted.map(l => card(l, false, {inWantedColumn: true})).join('')}</div></section>`;
@@ -403,7 +423,7 @@ function newspaperRows(rows, layout, sort) {
     if (featured.every(story => Math.abs(story.index - candidate.index) >= 3)) featured.push(candidate);
   }
   const featuredIds = new Set(featured.map(({listing}) => listing.id));
-  return `<div class="editorial-spread ${wanted.length ? 'has-classifieds' : ''}"><div class="editorial-mosaic">${offers.map(l => `<div class="editorial-slot ${featuredIds.has(l.id) ? 'story-featured' : ''}">${card(l)}</div>`).join('')}</div>${wanted.length ? `<aside class="classifieds-block" aria-label="Wanted requests"><div class="classifieds-masthead"><span>Requests</span><h2>Wanted</h2><p>What students are looking for</p></div>${wanted.map(l => card(l, false, {inWantedColumn: true})).join('')}<div class="classifieds-cta-slot"><a class="classifieds-place" href="#post/wanted"><span class="place-copy"><span class="place-text-out">Place a wanted listing</span><span class="place-text-in" aria-hidden="true">Post a wanted listing</span></span> ${viewArrow}</a></div></aside>` : ''}</div>`;
+  return `<section class="editorial-spread ${wanted.length ? 'has-classifieds' : ''}" aria-labelledby="offers-heading"><h2 id="offers-heading" class="sr-only">Available listings</h2><div class="editorial-mosaic">${offers.map(l => `<div class="editorial-slot ${featuredIds.has(l.id) ? 'story-featured' : ''}">${card(l)}</div>`).join('')}</div>${wanted.length ? `<aside class="classifieds-block" aria-label="Wanted requests"><div class="classifieds-masthead"><span>Requests</span><h2>Wanted</h2><p>What students are looking for</p></div>${wanted.map(l => card(l, false, {inWantedColumn: true})).join('')}<div class="classifieds-cta-slot"><a class="classifieds-place" href="#post/wanted"><span class="place-copy"><span class="place-text-out">Place a wanted listing</span><span class="place-text-in" aria-hidden="true">Post a wanted listing</span></span> ${viewArrow}</a></div></aside>` : ''}</section>`;
 }
 
 results=function(){

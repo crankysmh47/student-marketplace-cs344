@@ -1,15 +1,17 @@
-# Production deployment
+# Production Deployment
 
-Deployed 26 October 2026 to the authenticated Vercel account crankysmh47, scope crankysmh47s-projects.
+Project: **student-marketplace-cs344** (scope `crankysmh47s-projects`, owner `crankysmh47`).
+Production URL: **https://student-marketplace-cs344.vercel.app**
 
-Production URL: https://student-marketplace-cs344.vercel.app
+## Scope
+Only `assignment-1/` is deployed to Vercel as a pure static site (`assignment-1/vercel.json`: `"framework": null`, `"outputDirectory": "."`, no build step, backend API, database, or environment secrets). Documentation, wireframes, screenshots, tests, and submission reports remain outside the deployed bundle.
 
-Project: student-marketplace-cs344
+## Redeploy Commands
+GitHub pushes alone do not automatically trigger Vercel builds for this project; publish frontend updates under `assignment-1/` using the Vercel CLI:
 
-Deployment URL: https://student-marketplace-cs344-1oejjefv4-crankysmh47s-projects.vercel.app
+```bash
+vercel link --yes --project student-marketplace-cs344 --scope crankysmh47s-projects --cwd assignment-1
+vercel deploy --prod --yes --scope crankysmh47s-projects --cwd assignment-1
+```
 
-Only assignment-1 is uploaded. It is a static HTML/CSS/JavaScript deployment with no build command, API, database or environment secrets. Reports, student-identification documents, tests and other repository files are outside the deployed directory. The GitHub repository remains private.
-
-The production alias was verified with unauthenticated HTTP requests: root HTML, app.js, edition.js, navigation.js, newspaper.css, the masthead font and laptop SVG all returned 200 and matched the local files byte for byte. The live app rendered in the browser, its sidebar collapsed and reopened, no horizontal overflow was reported at the inspected desktop viewport, and the browser error log was empty. Screenshot: screenshots/vercel-production.jpg.
-
-The local .vercel link is intentionally ignored. To deploy a later revision, follow the CLI commands in the root README. GitHub pushes alone have not been configured as an automatic deployment workflow.
+Keeping `assignment-1/.vercel/` untracked in `.gitignore` avoids leaking local project metadata. Live HTTP status (`200`), asset loading, interactive DOM state, and empty browser console logs are verified against `https://student-marketplace-cs344.vercel.app` after deploying.

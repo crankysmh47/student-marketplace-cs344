@@ -10,7 +10,7 @@ function boot(t, route='#browse') {
   const w = dom.window; w.scrollTo=()=>{}; w.confirm=()=>true;
   w.HTMLElement.prototype.scrollIntoView=()=>{};
   const ctx=dom.getInternalVMContext();
-  for(const file of ['app.js','edition.js','themes.js','navigation.js']) vm.runInContext(fs.readFileSync(path.join(site,file),'utf8'),ctx,{filename:file});
+  for(const file of ['app.js','edition.js','navigation.js']) vm.runInContext(fs.readFileSync(path.join(site,file),'utf8'),ctx,{filename:file});
   t.after(()=>w.close());
   return {w,d:w.document,run:code=>vm.runInContext(code,ctx),go:async hash=>{w.location.hash=hash;await new Promise(resolve=>w.setTimeout(resolve,15));}};
 }
@@ -262,4 +262,31 @@ test('endnote CTA morphs reversibly from wanted rail and hides wanted tag inside
   await new Promise(r=>setTimeout(r,15));
   assert(d.querySelector('.classifieds-only'),'filtered Wanted view renders classifieds-only section');
   assert.equal(d.querySelector('.classifieds-only .listing-type-label'),null,'wanted section omits Wanted tag');
+});
+
+test('semantic browse heading order, non-nested select labels, and empty-select invalid feedback hold across routes',async t=>{
+  const {w,d,go}=boot(t);
+  assert.equal(d.querySelectorAll('label button, label [role="listbox"]').length,0,'custom select widgets never nest buttons inside labels');
+  const browseHeadings=[...d.querySelectorAll('#main h1,#main h2,#main h3')].map(el=>el.tagName);
+  assert.equal(browseHeadings[0],'H1');
+  assert.equal(browseHeadings[1],'H2','offers grid provides h2 before card h3s');
+  assert(browseHeadings.indexOf('H3')>browseHeadings.indexOf('H2'));
+
+  d.querySelector('[data-layout="list"]').click();
+  const listHeadings=[...d.querySelectorAll('#main h1,#main h2,#main h3')].map(el=>el.tagName);
+  assert.equal(listHeadings[1],'H2','list view preserves h2 before card h3s');
+
+  await go('#post');
+  const sel=d.querySelector('#form-category');
+  const wrap=sel.closest('.custom-select');
+  const trigger=wrap.querySelector('.select-trigger');
+  assert.equal(trigger.getAttribute('aria-controls'),'form-category-menu');
+  sel.dispatchEvent(new w.Event('invalid',{cancelable:true}));
+  assert(wrap.classList.contains('is-invalid'),'invalid category marks custom select trigger');
+  assert.equal(trigger.getAttribute('aria-invalid'),'true');
+  assert.match(d.querySelector('#category-error').textContent,/Choose a category/);
+  sel.value='Electronics';
+  sel.dispatchEvent(new w.Event('change',{bubbles:true}));
+  assert(!wrap.classList.contains('is-invalid'),'valid selection clears invalid styling');
+  assert.equal(d.querySelector('#category-error').textContent,'');
 });
