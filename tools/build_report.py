@@ -19,79 +19,191 @@ def font(size, bold=False):
 def text(draw, xy, value, size=22, bold=False, color='#222722'):
     draw.text(xy, value, font=font(size, bold), fill=color)
 
-def box(draw, xy, label='', size=20, color='#8a968d'):
-    draw.rectangle(xy, outline=color, width=2)
-    if label:
-        text(draw, (xy[0]+12, xy[1]+10), label, size)
+def pill(draw, xy, label, size=16, fill=None, outline='#d2cfc7', text_color='#0b0b0c', bold=True):
+    draw.rounded_rectangle(xy, radius=(xy[3] - xy[1]) // 2, fill=fill, outline=outline, width=2)
+    text(draw, (xy[0] + 16, xy[1] + max(4, (xy[3] - xy[1] - size) // 2 - 2)), label, size, bold, text_color)
 
-def wire_card(draw, x, y, w, h, title, image=True, ink='#215441'):
-    draw.line((x,y,x+w,y),fill=ink,width=4)
-    text(draw,(x+8,y+10),title,19,True,ink)
-    if image:
-        box(draw,(x+8,y+45,x+w-8,y+h//2),'Illustration',18,'#bbc4bc')
-    start=y+h//2+15 if image else y+55
-    for i,ratio in enumerate([.88,.74,.91]):
-        draw.line((x+8,start+i*22,x+int(w*ratio),start+i*22),fill='#aab5ac',width=3)
-    text(draw,(x+8,y+h-42),'Price     View listing',17,color=ink)
-    draw.line((x,y+h,x+w,y+h),fill='#bdc7be',width=2)
+
+def wire_card(draw, x, y, w, h, title, kind_pill='', media='Photo / Art', meta='Category · Age', foot='PKR amount'):
+    draw.rounded_rectangle((x, y, x + w, y + h), radius=14, fill='#ffffff', outline='#dedad2', width=2)
+    pad = 12
+    mw = w - pad * 2
+    if media:
+        mh = max(84, int(h * 0.44))
+        fill = '#16233b' if kind_pill == 'SERVICES' else '#efede7'
+        fg = '#ffffff' if kind_pill == 'SERVICES' else '#6f6e68'
+        draw.rounded_rectangle((x + pad, y + pad, x + w - pad, y + pad + mh), radius=10, fill=fill, outline='#d8d4cc', width=1)
+        text(draw, (x + pad + 14, y + pad + mh // 2 - 10), media, 16, True, fg)
+        if kind_pill:
+            pill(draw, (x + pad + 10, y + pad + 10, x + pad + 105, y + pad + 34), kind_pill, 12, '#2a3750', '#607090', '#ffffff')
+        cy = y + pad + mh + 12
+    else:
+        cy = y + pad + 6
+    text(draw, (x + pad + 4, cy), meta, 14, False, '#6f6e68')
+    text(draw, (x + pad + 4, cy + 22), title, 18, True, '#0b0b0c')
+    if y + h - 46 - (cy + 54) >= 18:
+        draw.line((x + pad + 4, cy + 54, x + w - pad - 24, cy + 54), fill='#c8c5bd', width=3)
+    if y + h - 46 - (cy + 72) >= 18:
+        draw.line((x + pad + 4, cy + 72, x + int(w * 0.72), cy + 72), fill='#d8d5ce', width=3)
+    draw.line((x + pad + 4, y + h - 46, x + w - pad - 4, y + h - 46), fill='#e8e5dd', width=2)
+    text(draw, (x + pad + 4, y + h - 34), foot, 16, True, '#0b0b0c')
+    text(draw, (x + w - pad - 68, y + h - 34), 'View ->', 15, True, '#0b0b0c')
+
 
 def make_wires():
-    img=Image.new('RGB',(1600,760),'white'); d=ImageDraw.Draw(img)
-    text(d,(38,20),'Desktop browse wireframe',30,True)
-    text(d,(520,74),'Student Marketplace',42,True)
-    d.line((38,145,1555,145),fill='#222722',width=4)
-    # Compact left navigation, with search and listings immediately alongside.
-    d.line((230,178,230,712),fill='#bdc7be',width=2)
-    for y,label in [(240,'Marketplace'),(296,'Saved finds'),(352,'My listings')]:text(d,(42,y),label,20,True)
-    box(d,(42,176,208,218),'Hide menu',18)
-    box(d,(42,414,208,472),'Post listing',20)
-    text(d,(42,507),'Demo records',17)
-    text(d,(42,534),'Reset on refresh',17)
-    box(d,(268,178,1550,233),'Search listings                                                     Search',22)
-    text(d,(270,257),'All listings    Goods    Services    Wanted                         Refine     Sort',21)
-    d.line((268,299,1550,299),fill='#bdc7be',width=2)
-    wire_card(d,268,324,620,190,'Goods - two-column feature',False)
-    wire_card(d,914,324,298,375,'Goods - narrow listing')
-    wire_card(d,268,548,298,174,'Goods',False)
-    wire_card(d,590,548,298,174,'Services',False,'#305c86')
-    d.line((1230,320,1230,720),fill='#bdc7be',width=2)
-    text(d,(1260,330),'WANTED CLASSIFIEDS',19,True,'#86532f')
-    wire_card(d,1250,382,300,205,'Wanted request',False,'#86532f')
-    box(d,(1250,617,1550,675),'Place a wanted listing',18,'#86532f')
-    img.save(WIRES/'browse-desktop.png')
+    # 1. Desktop Browse Wireframe
+    img = Image.new('RGB', (1600, 940), '#faf9f6')
+    d = ImageDraw.Draw(img)
+    text(d, (40, 18), 'Desktop Browse Wireframe — Monochrome Editorial Layout', 26, True, '#0b0b0c')
 
-    img=Image.new('RGB',(1600,920),'white'); d=ImageDraw.Draw(img)
-    text(d,(36,20),'Mobile browse and listing form wireframes',30,True)
-    box(d,(42,80,486,885));text(d,(80,105),'Student Marketplace',26,True)
-    text(d,(70,157),'Browse     Saved     My listings',20)
-    box(d,(68,205,458,256),'Search',22)
-    text(d,(68,281),'All   Goods   Services   Wanted',20)
-    wire_card(d,68,326,390,269,'Goods')
-    wire_card(d,68,625,390,150,'Services',False,'#305c86')
-    text(d,(68,812),'Wanted follows the main listings',19)
-    text(d,(580,94),'Post a listing',31,True)
-    text(d,(580,148),'Listing details',22,True)
-    for x,w,label in [(580,185,'Goods'),(780,185,'Services'),(980,185,'Wanted')]:box(d,(x,191,x+w,242),label,21)
-    for y,label in [(280,'Listing title'),(386,'Category')]:
-        text(d,(580,y),label,21,True);box(d,(580,y+34,1165,y+83),'Enter or select a value',20)
-    text(d,(580,492),'Description',21,True);box(d,(580,526,1165,655),'Condition or service scope',20)
-    text(d,(580,683),'Price / rate / budget     Location',21,True)
-    box(d,(580,719,860,765),'PKR amount',20);box(d,(883,719,1165,765),'Campus zone',20)
-    box(d,(580,810,905,867),'Submit for review',21)
-    text(d,(944,826),'Cancel',21)
-    wire_card(d,1220,191,335,355,'Live listing preview')
-    text(d,(1220,585),'New posts stay pending',19)
-    text(d,(1220,615),'until a later server',19)
-    text(d,(1220,645),'moderation workflow.',19)
-    img.save(WIRES/'mobile-and-form.png')
+    # Sticky header bar
+    d.rectangle((40, 62, 1560, 126), fill='#0b0b0c')
+    text(d, (64, 82), '[=] Menu drawer', 16, False, '#ffffff')
+    text(d, (680, 78), 'Student Marketplace', 26, True, '#ffffff')
+    text(d, (1245, 84), '[Bookmark 0]', 15, False, '#d8d5ce')
+    pill(d, (1355, 76, 1495, 112), 'Post a listing', 15, '#ffffff', '#ffffff', '#0b0b0c')
+    d.ellipse((1508, 76, 1544, 112), outline='#777777', width=2)
+    text(d, (1520, 84), 'A', 16, True, '#ffffff')
 
-    img=Image.new('RGB',(1600,245),'white'); d=ImageDraw.Draw(img)
-    stages=[('Browser form',(25,65,365,180)),('Validation and rules',(435,65,825,180)),('In-memory records',(895,65,1260,180))]
-    for label,coords in stages:box(d,coords,label,25,'#536d55')
-    for x in [385,845,1268]:text(d,(x,100),'>',34,True)
-    text(d,(1300,78),'DOM',25,True);text(d,(1300,120),'render',25)
-    text(d,(35,210),'Static HTTP server delivers files only. No API, database, sign-in or payment service in Assignment 1.',21)
-    img.save(WIRES/'client-data-flow.png')
+    # Hero strip + Filters drawer callout
+    d.rounded_rectangle((40, 146, 1560, 250), radius=18, fill='#f5f4f0', outline='#e2dfd7', width=2)
+    text(d, (72, 162), 'THE CAMPUS EDITION', 13, True, '#6f6e68')
+    text(d, (72, 184), 'Good finds, right here on campus.', 26, True, '#0b0b0c')
+    d.rounded_rectangle((740, 170, 1390, 224), radius=27, fill='#ffffff', outline='#dedad2', width=2)
+    text(d, (764, 188), 'Search goods, services or wanted posts', 17, False, '#88867f')
+    pill(d, (1282, 176, 1384, 218), 'Search', 15, '#0b0b0c', '#0b0b0c', '#ffffff')
+    pill(d, (1402, 170, 1532, 224), 'Filters', 16, '#ffffff', '#d2cfc7', '#0b0b0c')
+    text(d, (740, 232), 'Clicking Filters toggles drawer: Type tabs (All/Goods/Services/Wanted), Sort, Grid/List, Category, PKR range', 13, False, '#52514d')
+
+    # Left 3-col Mosaic + Right Sticky Wanted Rail
+    # Featured 2-col card
+    d.rounded_rectangle((40, 274, 796, 488), radius=16, fill='#ffffff', outline='#dedad2', width=2)
+    d.rounded_rectangle((54, 288, 424, 474), radius=12, fill='#efede7', outline='#d8d4cc', width=1)
+    text(d, (168, 370), 'Product Photo', 17, True, '#6f6e68')
+    pill(d, (68, 434, 140, 460), 'Good', 13, '#333333', '#333333', '#ffffff')
+    pill(d, (446, 292, 540, 316), 'FEATURED', 12, '#0b0b0c', '#0b0b0c', '#ffffff')
+    text(d, (552, 295), 'Electronics · 2 hours ago', 14, False, '#6f6e68')
+    text(d, (446, 330), '14-inch laptop · 8 GB / 256 GB', 22, True, '#0b0b0c')
+    d.line((446, 372, 765, 372), fill='#c8c5bd', width=3)
+    d.line((446, 392, 710, 392), fill='#d8d5ce', width=3)
+    text(d, (446, 444), 'PKR 62,000', 20, True, '#0b0b0c')
+    text(d, (710, 448), 'View ->', 16, True, '#0b0b0c')
+
+    wire_card(d, 818, 274, 366, 326, 'First-year textbooks', '', 'Illustration + Condition', 'Books & stationery', 'PKR 2,800')
+    wire_card(d, 40, 508, 366, 232, 'LED desk lamp', '', 'Illustration', 'Room essentials', 'PKR 1,800')
+    wire_card(d, 430, 508, 366, 232, 'Calculus tutoring', 'SERVICES', 'Skills & services', 'Tutoring · Yesterday', 'PKR 750 / hr')
+    wire_card(d, 818, 616, 366, 124, 'Wireless headphones', '', '', 'Electronics · Yesterday', 'PKR 4,500')
+
+    # Wanted sticky rail
+    d.rounded_rectangle((1210, 274, 1560, 720), radius=18, fill='#f5f4f0', outline='#e2dfd7', width=2)
+    text(d, (1234, 294), 'REQUESTS', 13, True, '#9a5b22')
+    text(d, (1234, 314), 'Wanted', 26, True, '#0b0b0c')
+    text(d, (1234, 346), 'What students are looking for', 14, False, '#6f6e68')
+    wire_card(d, 1234, 376, 302, 238, 'Wanted: a study chair', '', '', 'Room essentials (no pill)', 'Budget flexible')
+    pill(d, (1234, 646, 1536, 692), 'Place a wanted listing ->', 15, '#ffffff', '#d2cfc7', '#0b0b0c')
+
+    # Endnote bar + morph annotation
+    d.rounded_rectangle((40, 762, 1560, 868), radius=20, fill='#0b0b0c')
+    text(d, (80, 784), 'STILL LOOKING?', 13, True, '#b5b3ac')
+    text(d, (80, 808), "Can't find it? Ask the campus.", 26, True, '#ffffff')
+    pill(d, (1310, 792, 1530, 838), 'Post a wanted listing ->', 15, '#ffffff', '#ffffff', '#0b0b0c')
+    d.line((1395, 696, 1395, 790), fill='#9a5b22', width=3)
+    text(d, (1222, 734), 'Morphs on scroll-end', 14, True, '#9a5b22')
+
+    d.rectangle((40, 888, 1560, 926), fill='#0b0b0c')
+    text(d, (64, 898), 'Student Marketplace   ·   Campus peer-to-peer exchange   ·   Footer with subtle skyline', 15, False, '#d8d5ce')
+    img.save(WIRES / 'browse-desktop.png')
+
+    # 2. Mobile Browse & Post/Edit Listing Form Wireframe
+    img = Image.new('RGB', (1600, 980), '#faf9f6')
+    d = ImageDraw.Draw(img)
+    text(d, (36, 18), 'Mobile Browse & Listing Form Wireframes', 26, True, '#0b0b0c')
+
+    # Mobile viewport (left)
+    d.rounded_rectangle((36, 66, 486, 944), radius=20, fill='#faf9f6', outline='#8a968d', width=2)
+    d.rectangle((38, 68, 484, 122), fill='#0b0b0c')
+    text(d, (54, 86), '[=]   Student Marketplace', 18, True, '#ffffff')
+    text(d, (360, 88), '[Post] [A]', 14, True, '#ffffff')
+    d.rounded_rectangle((56, 140, 466, 224), radius=12, fill='#f5f4f0', outline='#dedad2', width=2)
+    text(d, (72, 150), 'Good finds, right here on campus.', 17, True, '#0b0b0c')
+    d.rounded_rectangle((72, 180, 354, 212), radius=16, fill='#ffffff', outline='#dedad2', width=1)
+    text(d, (86, 188), 'Search listings...', 14, False, '#88867f')
+    pill(d, (364, 180, 452, 212), 'Filters', 13, '#ffffff', '#d2cfc7', '#0b0b0c')
+    wire_card(d, 56, 240, 410, 224, '14-inch laptop', '', 'Product photo / art', 'Electronics', 'PKR 62,000')
+    wire_card(d, 56, 478, 410, 212, 'Calculus tutoring', 'SERVICES', 'Services art', 'Tutoring', 'PKR 750 / hr')
+    d.rounded_rectangle((56, 704, 466, 830), radius=14, fill='#f5f4f0', outline='#dedad2', width=2)
+    text(d, (74, 718), 'Wanted (stacked below <= 1120px)', 16, True, '#0b0b0c')
+    text(d, (74, 748), 'Wanted: a study chair · Budget flexible', 15, False, '#52514d')
+    pill(d, (74, 780, 316, 818), 'Place a wanted listing ->', 14, '#ffffff', '#d2cfc7', '#0b0b0c')
+    d.rounded_rectangle((56, 844, 466, 924), radius=14, fill='#0b0b0c')
+    text(d, (74, 858), "Can't find it? Ask the campus.", 15, True, '#ffffff')
+    pill(d, (74, 884, 286, 914), 'Post a wanted listing ->', 13, '#ffffff', '#ffffff', '#0b0b0c')
+
+    # Post / Edit Listing Form + Live Preview (right)
+    d.rounded_rectangle((524, 66, 1564, 944), radius=20, fill='#ffffff', outline='#dedad2', width=2)
+    text(d, (556, 88), 'Post a listing (#post) & Live Preview', 24, True, '#0b0b0c')
+    for x, w, lbl, active in [(556, 172, 'Goods', True), (742, 172, 'Services', False), (928, 172, 'Wanted', False)]:
+        d.rounded_rectangle((x, 140, x + w, 186), radius=10, fill='#0b0b0c' if active else '#faf9f6', outline='#0b0b0c' if active else '#d2cfc7', width=2)
+        text(d, (x + 52, 154), lbl, 17, True, '#ffffff' if active else '#0b0b0c')
+
+    for y, lbl, val in [(208, 'Listing title (5-80 chars, required)', 'Scientific calculator, like new'),
+                        (298, 'Category (Custom accessible select menu)', 'Choose a category              v')]:
+        text(d, (556, y), lbl, 16, True, '#0b0b0c')
+        d.rounded_rectangle((556, y + 26, 1100, y + 72), radius=10, fill='#ffffff', outline='#d2cfc7', width=2)
+        text(d, (574, y + 40), val, 16, False, '#6f6e68')
+
+    text(d, (556, 388), 'Description (20-1,500 chars, required)', 16, True, '#0b0b0c')
+    d.rounded_rectangle((556, 414, 1100, 514), radius=10, fill='#ffffff', outline='#d2cfc7', width=2)
+    text(d, (574, 428), 'Condition, specifications, or scope of service...', 16, False, '#6f6e68')
+
+    text(d, (556, 532), 'Price / Rate / Budget (PKR)', 16, True, '#0b0b0c')
+    text(d, (838, 532), 'Condition / Rate unit / Flex', 16, True, '#0b0b0c')
+    d.rounded_rectangle((556, 558, 822, 604), radius=10, fill='#ffffff', outline='#d2cfc7', width=2)
+    d.rounded_rectangle((838, 558, 1100, 604), radius=10, fill='#ffffff', outline='#d2cfc7', width=2)
+    text(d, (574, 572), '0 - 1,000,000', 15, False, '#6f6e68')
+    text(d, (854, 572), 'Like new  /  Per hour', 15, False, '#6f6e68')
+
+    text(d, (556, 624), 'Listing photo (optional, PNG/JPG/WebP/GIF <= 5 MB)', 16, True, '#0b0b0c')
+    d.rounded_rectangle((556, 650, 1100, 738), radius=12, fill='#faf9f6', outline='#b8b5ad', width=2)
+    text(d, (648, 676), 'Upload an image or drag and drop  (Replace / Remove)', 16, False, '#52514d')
+
+    text(d, (556, 756), 'Broad location', 16, True, '#0b0b0c')
+    text(d, (838, 756), 'Fallback artwork', 16, True, '#0b0b0c')
+    d.rounded_rectangle((556, 782, 822, 828), radius=10, fill='#ffffff', outline='#d2cfc7', width=2)
+    d.rounded_rectangle((838, 782, 1100, 828), radius=10, fill='#ffffff', outline='#d2cfc7', width=2)
+    text(d, (574, 796), 'Main campus              v', 15, False, '#6f6e68')
+    text(d, (854, 796), 'Laptop artwork           v', 15, False, '#6f6e68')
+
+    pill(d, (556, 864, 830, 912), 'Submit for review', 17, '#0b0b0c', '#0b0b0c', '#ffffff')
+    text(d, (858, 878), 'Cancel', 17, True, '#52514d')
+
+    # Live preview column
+    wire_card(d, 1138, 140, 392, 412, 'Live listing preview', '', 'Uploaded photo / SVG art', 'Category · Just now', 'PKR preview')
+    d.rounded_rectangle((1138, 578, 1530, 720), radius=12, fill='#f5f4f0', outline='#e2dfd7', width=2)
+    text(d, (1158, 598), 'Submission & Lifecycle Rules', 17, True, '#0b0b0c')
+    text(d, (1158, 628), '- New & edited posts enter My listings', 15, False, '#52514d')
+    text(d, (1158, 654), '  with Pending review badge.', 15, False, '#52514d')
+    text(d, (1158, 680), '- Client validation prevents invalid posts.', 15, False, '#52514d')
+    img.save(WIRES / 'mobile-and-form.png')
+
+    # 3. Client Data Flow Diagram
+    img = Image.new('RGB', (1600, 260), '#ffffff')
+    d = ImageDraw.Draw(img)
+    stages = [
+        ('Hash Routes & Forms', '#browse / #post / #saved / #mine', (28, 56, 378, 178)),
+        ('Validation & Filters', 'Bounds, escaping, 5MB photo check', (428, 56, 788, 178)),
+        ('In-Memory Store', 'listings[], savedFinds, recentlyViewed', (838, 56, 1198, 178)),
+        ('DOM Render & Morph', 'Mosaic, drawer, sticky CTA glide', (1248, 56, 1572, 178)),
+    ]
+    for title_s, sub_s, coords in stages:
+        d.rounded_rectangle(coords, radius=14, fill='#faf9f6', outline='#0b0b0c', width=2)
+        text(d, (coords[0] + 18, coords[1] + 24), title_s, 20, True, '#0b0b0c')
+        text(d, (coords[0] + 18, coords[1] + 64), sub_s, 15, False, '#52514d')
+    for x in [394, 804, 1214]:
+        text(d, (x, 98), '->', 26, True, '#0b0b0c')
+    text(d, (32, 208), 'Assignment 1 client-only architecture: static files only, in-memory state (resets on refresh), no backend database, login API, or payment service.', 18, False, '#52514d')
+    img.save(WIRES / 'client-data-flow.png')
+    print('Wireframes regenerated cleanly in', WIRES)
 
 def build():
     make_wires()

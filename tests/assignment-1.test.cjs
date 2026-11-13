@@ -202,3 +202,64 @@ test('photo upload supports any listing kind, updates live preview, and renders 
   w.dispatchEvent(new w.Event('hashchange'));
   assert(d.querySelector('img.detail-image[src^="data:image/png"]'),'detail view displays uploaded photo');
 });
+
+test('endnote CTA morphs reversibly from wanted rail and hides wanted tag inside wanted sections',async t=>{
+  const {d}=boot(t);
+  const w=d.defaultView;
+  Object.defineProperty(w,'innerWidth',{configurable:true,value:1366});
+  Object.defineProperty(w,'innerHeight',{configurable:true,value:768});
+  Object.defineProperty(d.documentElement,'scrollHeight',{configurable:true,value:1750});
+
+  const stage=d.querySelector('.endnote-stage');
+  const rail=d.querySelector('.classifieds-block');
+  const placeSlot=rail?.querySelector('.classifieds-cta-slot');
+  const placeBtn=rail?.querySelector('.classifieds-place');
+  const endCta=stage?.querySelector('.endnote-cta');
+  assert(stage&&stage.querySelector('.endnote-copy')&&endCta,'endnote stage structure present');
+  assert(rail&&placeSlot&&placeBtn,'wanted rail, CTA slot, and CTA present');
+  assert.equal(rail.querySelector('.listing-type-label'),null,'wanted rail cards omit redundant Wanted tag');
+  assert(d.querySelector('.kind-service .listing-type-label'),'services tag remains present');
+
+  rail.getBoundingClientRect=()=>({width:290,height:492,top:234,bottom:726,left:994,right:1284});
+  placeSlot.getBoundingClientRect=()=>({width:248,height:42,top:666,bottom:708,left:1015,right:1263});
+  endCta.getBoundingClientRect=()=>({width:214,height:46,top:786,bottom:832,left:1049,right:1263});
+  let currentY=0;
+  Object.defineProperty(w,'scrollY',{configurable:true,get:()=>currentY});
+
+  w.dispatchEvent(new w.Event('scroll'));
+  await new Promise(r=>setTimeout(r,30));
+  assert(stage.classList.contains('is-morph-active'),'desktop browse activates morph stage');
+  assert.equal(Number(stage.style.getPropertyValue('--p-morph')),0,'top of page starts before morph');
+  assert(!stage.classList.contains('is-landed'),'button has not landed before bottom');
+  assert.equal(placeBtn.getAttribute('aria-hidden'),null,'rail CTA stays accessible before end');
+  assert.equal(endCta.getAttribute('aria-hidden'),'true','endnote CTA stays hidden while button glided in');
+
+  currentY=1750-768;
+  w.dispatchEvent(new w.Event('scroll'));
+  await new Promise(r=>setTimeout(r,30));
+  assert(stage.classList.contains('is-landed'),'reaching end lands morphed button inside black bar');
+  assert.equal(Number(stage.style.getPropertyValue('--p-morph')),1,'morph factor reaches 1 at page bottom');
+  assert.equal(Number(stage.style.getPropertyValue('--p-land')),1,'land factor reaches 1 at page bottom');
+  assert.equal(Number(rail.style.getPropertyValue('--p-out')),0,'original label is fully faded out at page bottom');
+  assert.equal(Number(rail.style.getPropertyValue('--p-in')),1,'target label is fully faded in at page bottom');
+  assert(rail.classList.contains('is-landed'),'rail marks CTA landed at page bottom');
+  assert.equal(placeBtn.getAttribute('aria-hidden'),'true','floating CTA removed from accessibility tree when landed');
+  assert.equal(placeBtn.tabIndex,-1,'floating CTA removed from tab order when landed');
+  assert.equal(endCta.getAttribute('aria-hidden'),null,'native endnote CTA takes over accessibility focus');
+  assert.equal(endCta.tabIndex,0,'native endnote CTA restored to tab order when landed');
+  assert.notEqual(rail.style.getPropertyValue('--btn-dy'),'0px','button delta tracks vertical travel into black bar');
+
+  currentY=100;
+  w.dispatchEvent(new w.Event('scroll'));
+  await new Promise(r=>setTimeout(r,30));
+  assert(!stage.classList.contains('is-landed'),'scrolling up reverses landed state');
+  assert.equal(Number(stage.style.getPropertyValue('--p-morph')),0,'morph factor reverses smoothly back to 0');
+  assert(!rail.classList.contains('is-landed'),'rail CTA restores when scrolling back up');
+  assert.equal(placeBtn.getAttribute('aria-hidden'),null,'rail CTA accessible again after scrolling back');
+
+  const wantedChip=d.querySelector('[data-kind="wanted"]');
+  wantedChip.click();
+  await new Promise(r=>setTimeout(r,15));
+  assert(d.querySelector('.classifieds-only'),'filtered Wanted view renders classifieds-only section');
+  assert.equal(d.querySelector('.classifieds-only .listing-type-label'),null,'wanted section omits Wanted tag');
+});

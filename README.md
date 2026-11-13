@@ -1,90 +1,145 @@
 # Student Marketplace
 
-CS344 Web Engineering, Assignment 1. Annan Khan, CMS 506644, BESE15-B. Assigned idea 16: Student Marketplace Listings.
+CS344 Web Engineering — Assignment 1 (`Annan Khan`, CMS `506644`, `BESE15-B`).
 
-A browser-only campus marketplace for goods, service offers and wanted goods. It uses semantic HTML, CSS and vanilla JavaScript, with no framework or backend. The approved newspaper design has white surfaces, compact editorial columns and separate Wanted classifieds.
+A browser-only campus marketplace built with **semantic HTML, CSS, and vanilla JavaScript** (no framework, bundler, or backend). Students can browse goods, offer services, post wanted requests, filter by category and price range, bookmark saved items, upload listing photos, and manage owned listings across review lifecycle states.
 
-## Live application
+---
 
-https://student-marketplace-cs344.vercel.app
+## Assigned Idea & Rule
 
-This production URL is public and does not require a Vercel account. The deployed app has the same in-memory demo behavior as the local version.
+- **Assigned Idea #16**: *Student Marketplace Listings* (from the CS344 41-topic project bank, carried continuously across Assignment 1 client prototype -> Assignment 2 PHP/PDO -> Assignment 3 React/Express/MongoDB).
+- **Assigned Instructor Variant / Rule**: Supports **three listing kinds** (`Goods`, `Services` with rate units like per-hour/per-task, and `Wanted` notices with optional flexible budgets), category filtering, saved bookmarks, moderation/review lifecycle states (`Active`, `Pending review`, `Rejected` with reason, `Expired`), expiry and abuse/reporting readiness, and browser-only simulation with no payments or external authentication in Assignment 1.
 
-## Run locally
+---
 
-Install Python 3, open a terminal in this repository, then run:
+## Live Application
 
-    py -m http.server 5519 --bind 127.0.0.1 --directory assignment-1
+- **Vercel Production**: https://student-marketplace-cs344.vercel.app
 
-On macOS/Linux use python3 instead of py. Visit http://127.0.0.1:5519/?theme=forest#browse. Keep the terminal open. Stop it with Ctrl+C. Any static HTTP server may serve assignment-1; no database, secrets, npm build or account is required.
+The live site serves the static client in `assignment-1/` with no login wall or environment secrets. All records and bookmarks live in memory and reset on browser refresh.
 
-All listings and saves live in memory and reset on refresh. Alex is a fictional demo student. The app does not verify university membership, contact another person or process payments.
+---
 
-## Assigned rule and scope
+## Local Setup & Run Steps
 
-The supplied project variant adds moderation, categories, saved items, contact requests, expiry and report-abuse flows using demo data and no payments. Assignment 1 implements listing discovery, categories, price/type filtering, in-memory listing CRUD and saved items. Pending/rejected/expired fixtures demonstrate lifecycle states. These states do not implement a moderator service, automatic expiry, contact requests or report resolution. Those are planned for the later assignments. No separate additional instructor rule was supplied beyond this description.
+### 1. Run the application (no build or Node dependencies required)
 
-The desktop menu can be collapsed with Hide menu and reopened with Menu. It supports keyboard activation and preserves form values. Small-screen navigation stays visible.
+Open a terminal inside the repository root and start any static HTTP server pointing at `assignment-1`:
 
-## Demonstrate the workflow
+```powershell
+# Windows
+py -m http.server 5519 --bind 127.0.0.1 --directory assignment-1
+```
 
-1. Browse Goods, Services and Wanted. Open Refine, select a category or price range, and apply it. Search for a title and try a query with no matches.
-2. Open a listing, inspect its details, save it and visit Saved finds. Unsave it and check the empty view.
-3. Post a listing. Try empty fields, then enter a title of 5-80 characters, a description of 20-1500 characters, a valid category and an amount of 0-1000000 PKR with up to two decimals.
-4. Switch between goods, services and wanted. Services select a rate unit; wanted can use a flexible budget. Preview the entered content.
-5. Submit. The new listing appears as Pending review in My listings, not in public browse. Edit and delete only an owned demo listing. Refresh to reset.
+```bash
+# macOS / Linux
+python3 -m http.server 5519 --bind 127.0.0.1 --directory assignment-1
+```
 
-## Test
+Then visit:
 
-The app needs no Node dependencies to run. For development tests, use Node 20 or later and pnpm:
+```text
+http://127.0.0.1:5519/#browse
+```
 
-    pnpm install --frozen-lockfile
-    pnpm test
+Keep the terminal open while testing (`Ctrl+C` to stop).
 
-Tests use Node's test runner and jsdom for DOM behavior. They do not render a browser or prove exact visual geometry. See docs/verification.md for scope and pending viewport checks.
+### 2. Run automated DOM tests (optional)
 
-## Files
+Requires Node.js 20+ (uses Node's built-in test runner and `jsdom` from `devDependencies`):
 
-- assignment-1: runnable client and local assets.
-- tests: automated workflow and edge-case checks.
-- docs/design-lock.md: final visual decisions and later-stage boundaries.
-- docs/wireframes: desktop and mobile wireframes; these are schematics, not screenshots.
-- submission: design and WDLC report for LMS.
-- tools: document/wireframe generation helpers.
+```bash
+pnpm install --frozen-lockfile   # or: npm install
+pnpm test                        # or: npm test
+```
+
+> **Note:** Automated tests verify DOM interactions, form constraints, filtering, XSS-safe escaping, photo upload bindings, custom dropdown sync, and scroll-morph state transitions in `jsdom`; visual geometry and responsive layout are verified in Chromium across desktop, tablet, and mobile viewports.
+
+---
+
+## Key Features & Walkthrough
+
+1. **Browse, Search & Filters Drawer (`#browse`)**:
+   - Click the top-left menu button (`#menu-toggle`) to open the slide-over navigation drawer (`Marketplace`, `Saved finds`, `My listings`, `Post a listing`) without losing unsaved form inputs.
+   - Search by keyword and toggle **Filters** to switch listing types (`All`, `Goods`, `Services`, `Wanted` with live counts), sort (`Newest first`, `Price: low to high`, `Price: high to low`), toggle grid/list layout, pick quick collections, or filter by category and `Min`/`Max` PKR range.
+2. **Editorial Grid & Sticky Wanted Morph**:
+   - Higher-priced featured goods span two columns with a `Featured` pill; services use a crisp dark card with a `SERVICES` badge while goods and dedicated Wanted column cards omit redundant type labels.
+   - As scrolling docks the sticky right **Wanted** rail above the footer bar, the **`Place a wanted listing ->`** pill smoothly glides into the full-width dark **`Can't find it? Ask the campus. / Post a wanted listing ->`** bar and reverses cleanly on scrolling back up.
+3. **Save Finds (`#saved`) & Detail View (`#listing/<id>`)**:
+   - Bookmark cards or save from the listing detail page; view and manage saved items under `#saved`.
+4. **Post / Edit Listing (`#post`, `#edit/<id>`)**:
+   - Switch between **Goods** (asks price & condition), **Services** (rate & `Hour`/`Task` unit), and **Wanted** (max budget or `Budget flexible`).
+   - Enforces bounded title (`5–80` chars), category selection, bounded description (`20–1,500` chars), valid PKR amount (`0–1,000,000`, up to 2 decimals), optional image upload (`PNG`/`JPG`/`WebP`/`GIF` up to `5 MB` via picker or drag-and-drop), custom keyboard-accessible dropdowns, and a **Live preview** card.
+5. **My Listings & Lifecycle States (`#mine`)**:
+   - Filter owned posts by status (`All listings`, `Pending`, `Active`, `Rejected`, `Expired`), inspect rejection feedback, edit posts (which re-enters `Pending review`), or delete with confirmation.
+
+---
+
+## Client vs Server Architecture
+
+![Client data flow diagram](docs/wireframes/client-data-flow.png)
+
+- **Runs in the browser**: hash routing (`#browse`, `#saved`, `#mine`, `#post`, `#edit/<id>`, `#listing/<id>`), filtering/sorting, mosaic row packing, native & JS form validation, HTML entity escaping, `FileReader` in-memory photo previews, and sticky scroll-morph interpolation.
+- **Deferred to Assignments 2 & 3**: persistent SQLite/MySQL (`PDO`) and MongoDB storage, server-side validation and moderation approval workflows, session authentication / CSRF protection, real campus email checks, expiry automation, contact requests, and abuse reporting.
+
+---
+
+## Wireframes
+
+| Desktop Browse Layout & Scroll-Morph Flow | Mobile Browse & Listing Form Wireframes |
+| :---: | :---: |
+| ![Desktop browse wireframe](docs/wireframes/browse-desktop.png) | ![Mobile browse and listing form wireframes](docs/wireframes/mobile-and-form.png) |
+
+---
 
 ## Screenshots
 
-Actual browser screenshots are included. Desktop (1280x800), tablet (768x1024) and mobile (390x844) checks found no horizontal overflow. Form validation, saved items and owner-listing views are also captured. These are agent-run checks, not evidence of the student's own live walkthrough.
+Captured from the running static client in Chromium across desktop (`1440x900`, `1366x768`, `1280x800`), tablet (`768x1024`), and mobile (`390x844`) viewports with zero horizontal overflow and zero console errors.
 
 ![Desktop marketplace preview](docs/screenshots/preview.jpg)
 
-- [Desktop browse](docs/screenshots/desktop-browse.jpg)
-- [Collapsed desktop sidebar](docs/screenshots/sidebar-collapsed.jpg)
-- [Tablet browse](docs/screenshots/tablet-browse.jpg)
-- [Mobile browse](docs/screenshots/mobile-browse.jpg)
-- [Listing form](docs/screenshots/listing-form.jpg)
-- [Native validation](docs/screenshots/form-validation.jpg)
-- [My listings and review states](docs/screenshots/my-listings.jpg)
-- [Saved listings](docs/screenshots/saved-listings.jpg)
+| Desktop Filters Drawer | Scroll-End Wanted CTA Morph |
+| :---: | :---: |
+| ![Filters drawer open](docs/screenshots/filters-drawer.jpg) | ![Endnote CTA morph at page bottom](docs/screenshots/endnote-morph.jpg) |
 
-Browser automation stalled at a JavaScript Delete confirmation. The in-memory delete and cancel paths pass automated DOM tests; complete this one browser check during the live walkthrough.
+| Slide-Over Navigation Drawer | Post a Listing & Live Preview |
+| :---: | :---: |
+| ![Slide-over menu drawer](docs/screenshots/drawer-menu.jpg) | ![Post a listing form with live preview](docs/screenshots/listing-form.jpg) |
 
-## Assets and assistance
+| My Listings Lifecycle States | Saved Finds Collection |
+| :---: | :---: |
+| ![My listings and review states](docs/screenshots/my-listings.jpg) | ![Saved listings view](docs/screenshots/saved-listings.jpg) |
 
-Local SVG listing illustrations were generated for this fictional demo. Font files and their upstream license notices are in assignment-1/assets/fonts. Font sources: google/fonts ofl/unifrakturcook, apache/robotoslab, ofl/librecaslontext, ofl/fraunces and ofl/dmsans. Some earlier font variants remain in the reference styles; the locked forest/newspaper view uses Unifraktur Cook and Roboto Slab.
+| Inline Form Validation | Tablet (`768x1024`) | Mobile (`390x844`) |
+| :---: | :---: | :---: |
+| ![Form validation errors](docs/screenshots/form-validation.jpg) | ![Tablet responsive browse](docs/screenshots/tablet-browse.jpg) | ![Mobile responsive browse](docs/screenshots/mobile-browse.jpg) |
 
-The instructor's permission to use the generated preview was confirmed by the student on 26 October 2026. Annan will add the final AI assistance statement before submission. No claim is made that the original preview was developed test first; tests preceded the new validation and delete fixes.
+---
 
-## Assignment continuity
+## Repository Layout
 
-The current stage is preserved in assignment-1 and an assignment-1-v1.3 tag (the original v1.0 checkpoint is retained). Keep future PHP/PDO and MERN stages in separate assignment folders or branches. Consult docs/design-lock.md for shared product rules. The full-project rubric and final due date have not yet been supplied.
+- `assignment-1/`: Runnable static frontend (`index.html`, `app.js`, `edition.js`, `navigation.js`, `themes.js`, `premium.css`, local SVG artwork & bundled `assets/fonts/`).
+- `tests/`: Automated DOM and workflow test suite (`tests/assignment-1.test.cjs` — 14 tests).
+- `docs/`: Verification notes (`verification.md`), deployment notes (`deployment.md`), design lock (`design-lock.md`), asset attribution (`attribution.md`), wireframes (`docs/wireframes/`), and browser screenshots (`docs/screenshots/`).
+- `tools/`: Python helper (`build_report.py`) for regenerating documentation wireframes and reports.
+- `submission/`: Formatted assignment design note document (`.docx` / `.pdf`).
 
+---
 
-## Deploy updates
+## Assets & Attribution
 
-The static Vercel project uses assignment-1 as its deployed directory. No build step is needed. With the Vercel CLI signed into the owning account, run:
+- Fonts are bundled locally under `assignment-1/assets/fonts/` (no external font CDN dependency): **Fraunces**, **DM Sans**, **Unifraktur Cook**, **Roboto Slab**, and **Libre Caslon Text** with open-source licenses in `assignment-1/assets/fonts/` and details in [docs/attribution.md](docs/attribution.md).
+- Custom SVG campus skyline (`assignment-1/assets/skyline.svg`) and listing illustrations reside under `assignment-1/assets/`.
+- AI coding assistance was used to structure and refine the interface, responsive CSS, documentation wireframes, and test suite under instructor guidelines for CS344 Assignment 1.
 
-    vercel link --yes --project student-marketplace-cs344 --scope crankysmh47s-projects --cwd assignment-1
-    vercel deploy --prod --yes --scope crankysmh47s-projects --cwd assignment-1
+---
 
-Keep .vercel ignored. The GitHub repository remains private; only the app directory is publicly deployed. See docs/deployment.md for verification.
+## Deploying Static Updates to Vercel
+
+Only `assignment-1/` is deployed (no build step required):
+
+```bash
+vercel link --yes --project student-marketplace-cs344 --scope crankysmh47s-projects --cwd assignment-1
+vercel deploy --prod --yes --scope crankysmh47s-projects --cwd assignment-1
+```

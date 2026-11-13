@@ -155,14 +155,15 @@ function excerpt(l){
   if(clean.length<=116)return clean;
   return `${clean.slice(0,116).replace(/\s+\S*$/,'').replace(/[.,;:]+$/,'')}…`;
 }
-card=function(l,owner=false){
+card=function(l,owner=false,opts={}){
   const hasPhoto=Boolean(l.photoUrl);
   const useImage=l.kind==='goods'||hasPhoto;
   const src=l.photoUrl||`assets/${esc(l.image)}.svg`;
   const media=useImage
     ?`<img src="${esc(src)}" alt="" loading="lazy">${l.kind==='goods'?`<span class="image-label">${conditions[l.condition]||'Goods'}</span>`:''}`
     :`<span class="type-art-word">${l.kind==='service'?'Skills &amp; services':'Wanted'}</span><span class="type-art-sub">${esc(l.category)}</span>`;
-  const typeBadge=l.kind==='goods'?'':`<span class="listing-type-label">${kindName[l.kind]}</span>`;
+  const hideTypePill=l.kind==='goods'||(l.kind==='wanted'&&opts.inWantedColumn);
+  const typeBadge=hideTypePill?'':`<span class="listing-type-label">${kindName[l.kind]}</span>`;
   const ownerBits=owner?`<div class="owner-actions">${status(l)}<a href="#edit/${esc(l.id)}">Edit</a><button type="button" class="text-button" data-delete="${esc(l.id)}">Delete</button></div>${l.status==='rejected'?`<p class="rejection-note">${esc(l.reason)}</p>`:''}`:'';
   return `<article class="listing-card kind-${l.kind}" data-listing-id="${esc(l.id)}">`+
     `<a class="card-media ${useImage?'card-image':'type-art'} ${hasPhoto?'has-photo':''}" href="#listing/${esc(l.id)}" tabindex="-1" aria-hidden="true">${media}</a>`+
@@ -221,7 +222,7 @@ browse=function(){
     `<p id="range-error" role="alert"></p></form></div></div>`+
     `<div id="active-filters" class="active-filters" aria-label="Active filters"></div>`+
     `<div class="listing-grid edition-grid" id="results"></div><div id="pagination" class="pagination"></div>`+
-    `<div class="endnote"><div><p class="eyebrow">Still looking?</p><h2>Can’t find it? Ask the campus.</h2></div><a class="button light" href="#post/wanted">Post a wanted listing ${viewArrow}</a></div>${recentSection()}`;
+    `<div class="endnote-stage"><div class="endnote"><div class="endnote-copy"><p class="eyebrow">Still looking?</p><h2>Can’t find it? Ask the campus.</h2></div><a class="button light endnote-cta" href="#post/wanted">Post a wanted listing ${viewArrow}</a></div></div>${recentSection()}`;
   $('#search-form').onsubmit=e=>{e.preventDefault();query.q=$('#search').value.trim();query.page=1;quickPick='';results();};
   main.querySelectorAll('[data-kind]').forEach(b=>b.onclick=()=>{query.kind=b.dataset.kind;query.category='all';query.page=1;quickPick='';browse();});
   $('.filter-toggle').onclick=()=>setFiltersOpen(!filtersOpen);
@@ -265,6 +266,7 @@ function arrangeNewspaper() {
       if (spans[i] === null) slot.style.removeProperty('grid-row-end');
       else slot.style.gridRowEnd = `span ${spans[i]}`;
     });
+    syncEndnoteMorph();
   };
   newspaperLayout = () => {
     if (!newspaperFrame && grid.isConnected) newspaperFrame = requestAnimationFrame(fit);
@@ -276,14 +278,120 @@ function arrangeNewspaper() {
   newspaperLayout();
   document.fonts?.ready.then(() => { if (grid.isConnected) newspaperLayout(); });
 }
-addEventListener('resize', () => { closeAllSelects(false); newspaperLayout(); });
+
+let endnoteMorphFrame = 0;
+function syncEndnoteMorph() {
+  endnoteMorphFrame = 0;
+  const stage = main.querySelector('.endnote-stage');
+  const spread = main.querySelector('.editorial-spread.has-classifieds');
+  const rail = spread?.querySelector('.classifieds-block');
+  if (!stage) return;
+  const placeSlot = rail?.querySelector('.classifieds-cta-slot');
+  const placeBtn = rail?.querySelector('.classifieds-place');
+  const endCta = stage.querySelector('.endnote-cta');
+  const reduced = typeof matchMedia === 'function' && matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const railW = rail ? Math.round(rail.getBoundingClientRect().width) : 0;
+  const vh = typeof innerHeight === 'number' ? innerHeight : 800;
+  const curY = typeof scrollY === 'number' ? scrollY : 0;
+  const maxScroll = Math.max(0, document.documentElement.scrollHeight - vh);
+  if (!rail || railW <= 0 || (typeof innerWidth === 'number' && innerWidth <= 1120) || reduced || maxScroll <= 80) {
+    stage.classList.remove('is-morph-active', 'is-landed');
+    ['--p-morph', '--p-land'].forEach(v => stage.style.removeProperty(v));
+    if (rail) {
+      rail.classList.remove('is-morphed', 'is-landed');
+      ['--p-morph', '--p-out', '--p-in', '--p-land', '--btn-dx', '--btn-dy', '--slot-w', '--target-w'].forEach(v => rail.style.removeProperty(v));
+    }
+    if (placeBtn) {
+      placeBtn.removeAttribute('tabindex');
+      placeBtn.removeAttribute('aria-hidden');
+    }
+    if (endCta) {
+      endCta.removeAttribute('tabindex');
+      endCta.removeAttribute('aria-hidden');
+    }
+    return;
+  }
+
+  const ENDNOTE_LIFT = 22;
+  const spreadRect = spread.getBoundingClientRect();
+  const railH = rail.offsetHeight || Math.round(rail.getBoundingClientRect().height);
+  const hasRealLayout = spreadRect.height > 0 && railH > 0;
+  const dockScroll = hasRealLayout ? Math.max(0, (spreadRect.bottom + curY) - (84 + railH)) : 0;
+  const startY = Math.min(Math.max(0, maxScroll - 120), Math.max(dockScroll, Math.max(0, maxScroll - 220)));
+  const endY = Math.max(startY + 40, maxScroll - Math.min(24, maxScroll * 0.05));
+  const raw = Math.max(0, Math.min(1, (curY - startY) / Math.max(1, endY - startY)));
+  const p = raw * raw * (3 - 2 * raw);
+  const pOut = Math.max(0, Math.min(1, 1 - (p - 0.16) / 0.24));
+  const pIn = Math.max(0, Math.min(1, (p - 0.44) / 0.24));
+  const pLand = Math.max(0, Math.min(1, (p - 0.88) / 0.12));
+
+  let dx = 0, dy = 0, slotW = railW - 44, targetW = railW - 44;
+  if (placeSlot && endCta) {
+    const endnote = stage.querySelector('.endnote');
+    const trStyle = endnote && typeof getComputedStyle === 'function' ? getComputedStyle(endnote).transform : '';
+    const m = trStyle && trStyle !== 'none' ? trStyle.match(/matrix\([^,]+,[^,]+,[^,]+,[^,]+,[^,]+,\s*([-\d.]+)\)/) : null;
+    const curShift = m ? Number(m[1]) : 0;
+    const sr = placeSlot.getBoundingClientRect();
+    const tr = endCta.getBoundingClientRect();
+    if (sr.width > 0 && tr.width > 0) {
+      dx = (tr.left + tr.width / 2) - (sr.left + sr.width / 2);
+      // Measure against endCta's final (-ENDNOTE_LIFT) resting position so transforms never lag a frame.
+      dy = ((tr.top - curShift) - ENDNOTE_LIFT + tr.height / 2) - (sr.top + sr.height / 2);
+      slotW = sr.width;
+      targetW = tr.width;
+    }
+  }
+
+  const landed = p >= 0.88;
+  stage.classList.add('is-morph-active');
+  stage.classList.toggle('is-landed', landed);
+  stage.style.setProperty('--p-morph', p.toFixed(4));
+  stage.style.setProperty('--p-land', pLand.toFixed(4));
+
+  rail.classList.toggle('is-morphed', p > 0.02);
+  rail.classList.toggle('is-landed', landed);
+  rail.style.setProperty('--p-morph', p.toFixed(4));
+  rail.style.setProperty('--p-out', pOut.toFixed(4));
+  rail.style.setProperty('--p-in', pIn.toFixed(4));
+  rail.style.setProperty('--p-land', pLand.toFixed(4));
+  rail.style.setProperty('--btn-dx', `${dx.toFixed(2)}px`);
+  rail.style.setProperty('--btn-dy', `${dy.toFixed(2)}px`);
+  rail.style.setProperty('--slot-w', `${slotW.toFixed(1)}px`);
+  rail.style.setProperty('--target-w', `${targetW.toFixed(1)}px`);
+
+  if (placeBtn) {
+    if (landed) {
+      placeBtn.tabIndex = -1;
+      placeBtn.setAttribute('aria-hidden', 'true');
+    } else {
+      placeBtn.removeAttribute('tabindex');
+      placeBtn.removeAttribute('aria-hidden');
+    }
+  }
+  if (endCta) {
+    if (landed) {
+      endCta.removeAttribute('tabindex');
+      endCta.removeAttribute('aria-hidden');
+    } else {
+      endCta.tabIndex = -1;
+      endCta.setAttribute('aria-hidden', 'true');
+    }
+  }
+}
+function scheduleEndnoteMorph() {
+  if (!endnoteMorphFrame && main.querySelector('.endnote-stage')) {
+    endnoteMorphFrame = requestAnimationFrame(syncEndnoteMorph);
+  }
+}
+addEventListener('scroll', scheduleEndnoteMorph, {passive: true});
+addEventListener('resize', () => { closeAllSelects(false); newspaperLayout(); scheduleEndnoteMorph(); });
 
 // Composition is presentation only: filters and pagination own the rows.
 function newspaperRows(rows, layout, sort) {
   if (layout === 'list' || sort !== 'newest') return rows.map(l => card(l)).join('');
   const wanted = rows.filter(l => l.kind === 'wanted');
   const offers = rows.filter(l => l.kind !== 'wanted');
-  if (!offers.length) return `<section class="classifieds-only"><div class="edition-section-heading"><h2>Wanted</h2><a href="#post/wanted">Place a request ${viewArrow}</a></div><div class="classifieds-grid">${wanted.map(l => card(l)).join('')}</div></section>`;
+  if (!offers.length) return `<section class="classifieds-only"><div class="edition-section-heading"><h2>Wanted</h2><a href="#post/wanted">Place a request ${viewArrow}</a></div><div class="classifieds-grid">${wanted.map(l => card(l, false, {inWantedColumn: true})).join('')}</div></section>`;
   // Occasional features span two columns and one row, in result order.
   const candidates = offers.map((listing,index) => ({listing,index}))
     .filter(({listing}) => listing.kind === 'goods')
@@ -295,7 +403,7 @@ function newspaperRows(rows, layout, sort) {
     if (featured.every(story => Math.abs(story.index - candidate.index) >= 3)) featured.push(candidate);
   }
   const featuredIds = new Set(featured.map(({listing}) => listing.id));
-  return `<div class="editorial-spread ${wanted.length ? 'has-classifieds' : ''}"><div class="editorial-mosaic">${offers.map(l => `<div class="editorial-slot ${featuredIds.has(l.id) ? 'story-featured' : ''}">${card(l)}</div>`).join('')}</div>${wanted.length ? `<aside class="classifieds-block" aria-label="Wanted requests"><div class="classifieds-masthead"><span>Requests</span><h2>Wanted</h2><p>What students are looking for</p></div>${wanted.map(l => card(l)).join('')}<a class="classifieds-place" href="#post/wanted">Place a wanted listing ${viewArrow}</a></aside>` : ''}</div>`;
+  return `<div class="editorial-spread ${wanted.length ? 'has-classifieds' : ''}"><div class="editorial-mosaic">${offers.map(l => `<div class="editorial-slot ${featuredIds.has(l.id) ? 'story-featured' : ''}">${card(l)}</div>`).join('')}</div>${wanted.length ? `<aside class="classifieds-block" aria-label="Wanted requests"><div class="classifieds-masthead"><span>Requests</span><h2>Wanted</h2><p>What students are looking for</p></div>${wanted.map(l => card(l, false, {inWantedColumn: true})).join('')}<div class="classifieds-cta-slot"><a class="classifieds-place" href="#post/wanted"><span class="place-copy"><span class="place-text-out">Place a wanted listing</span><span class="place-text-in" aria-hidden="true">Post a wanted listing</span></span> ${viewArrow}</a></div></aside>` : ''}</div>`;
 }
 
 results=function(){
@@ -313,7 +421,7 @@ results=function(){
   main.querySelectorAll('[data-remove-filter]').forEach(b=>b.onclick=()=>{const k=b.dataset.removeFilter;if(k==='q')query.q='';if(k==='kind')query.kind='all';if(k==='category')query.category='all';if(k==='amount'){query.min='';query.max='';}query.page=1;quickPick='';browse();});
   const badgeCount=activeFilterCount(),toggle=$('.filter-toggle');
   if(toggle){toggle.querySelector('.filter-badge')?.remove();if(badgeCount)toggle.insertAdjacentHTML('beforeend',`<b class="filter-badge">${badgeCount}</b>`);}
-  syncSaves();arrangeNewspaper();
+  syncSaves();arrangeNewspaper();syncEndnoteMorph();scheduleEndnoteMorph();
 };
 
 function savedView(){
@@ -361,7 +469,7 @@ formView=function(id){
   update();
 };
 removeEventListener('hashchange',route);
-route=function(){closeAllSelects(false);toast('');newspaperObserver?.disconnect();cancelAnimationFrame(newspaperFrame);newspaperFrame=0;newspaperLayout=()=>{};let hash=location.hash||'#browse';if(!/^#(browse|saved|mine|post(?:\/wanted)?|listing\/[\w-]+|edit\/[\w-]+)$/.test(hash)){hash='#browse';history.replaceState(null,'',location.pathname+location.search+hash);}const [view,id]=hash.slice(1).split('/');if(view==='browse')browse();else if(view==='saved')savedView();else if(view==='mine')mine();else if(view==='listing')detail(id);else{formView(view==='edit'?id:null);if(view==='post'&&id==='wanted'){const r=$('[name=kind][value=wanted]');r.checked=true;r.dispatchEvent(new Event('change',{bubbles:true}));formSnapshot=serializeForm();}}document.title=`${{browse:'The campus edition',saved:'Saved finds',mine:'My listings',listing:'Listing details',post:'Post a listing',edit:'Edit listing'}[view]} · Student Marketplace`;document.querySelectorAll('[data-nav]').forEach(a=>{if(a.dataset.nav===view)a.setAttribute('aria-current','page');else a.removeAttribute('aria-current');});document.body.dataset.view=view;syncSaves();$('h1')?.focus({preventScroll:true});scrollTo({top:0,behavior:'instant'});lastHash=hash;};
+route=function(){closeAllSelects(false);toast('');newspaperObserver?.disconnect();cancelAnimationFrame(newspaperFrame);newspaperFrame=0;cancelAnimationFrame(endnoteMorphFrame);endnoteMorphFrame=0;newspaperLayout=()=>{};let hash=location.hash||'#browse';if(!/^#(browse|saved|mine|post(?:\/wanted)?|listing\/[\w-]+|edit\/[\w-]+)$/.test(hash)){hash='#browse';history.replaceState(null,'',location.pathname+location.search+hash);}const [view,id]=hash.slice(1).split('/');if(view==='browse')browse();else if(view==='saved')savedView();else if(view==='mine')mine();else if(view==='listing')detail(id);else{formView(view==='edit'?id:null);if(view==='post'&&id==='wanted'){const r=$('[name=kind][value=wanted]');r.checked=true;r.dispatchEvent(new Event('change',{bubbles:true}));formSnapshot=serializeForm();}}document.title=`${{browse:'The campus edition',saved:'Saved finds',mine:'My listings',listing:'Listing details',post:'Post a listing',edit:'Edit listing'}[view]} · Student Marketplace`;document.querySelectorAll('[data-nav]').forEach(a=>{if(a.dataset.nav===view)a.setAttribute('aria-current','page');else a.removeAttribute('aria-current');});document.body.dataset.view=view;syncSaves();$('h1')?.focus({preventScroll:true});scrollTo({top:0,behavior:'instant'});lastHash=hash;};
 addEventListener('hashchange',route);
 document.body.dataset.direction='newspaper';document.body.dataset.layout=resultLayout;route();
 
